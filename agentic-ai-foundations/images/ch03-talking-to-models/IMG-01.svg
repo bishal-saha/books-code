@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">How the CLI handles each neutral stop reason</title>
+  <desc id="d">A model response goes through the adapter, which maps the provider's stop reason to one of four neutral values. finished prints the draft and the cost footer. truncated prints the draft with a truncated warning: do not send it as is. tool_call cannot happen yet because this chapter sends no tools; Chapter 6 adds tools. other, such as a refusal, prints the text with a stopped warning.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="96" font-size="40" font-weight="600">One response, four neutral stop reasons</text>
+
+    <rect x="80" y="390" width="300" height="120" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="230" y="442" font-size="28" font-weight="600" text-anchor="middle">Model response</text>
+    <text x="230" y="480" font-size="22" text-anchor="middle">via the adapter</text>
+
+    <path d="M560 450 L660 370 L760 450 L660 530 Z" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="660" y="444" font-size="26" font-weight="600" text-anchor="middle">Stop</text>
+    <text x="660" y="476" font-size="26" font-weight="600" text-anchor="middle">reason</text>
+    <line x1="382" y1="450" x2="552" y2="450" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <g stroke="#CBD5E1" stroke-width="3" fill="none" stroke-linejoin="round">
+      <path d="M720 418 L800 215 L940 215" marker-end="url(#arrow)"/>
+      <path d="M760 450 L800 375 L940 375" marker-end="url(#arrow)"/>
+      <path d="M760 450 L800 535 L940 535" marker-end="url(#arrow)"/>
+      <path d="M720 482 L800 695 L940 695" marker-end="url(#arrow)"/>
+    </g>
+
+    <g font-family="'JetBrains Mono', ui-monospace, monospace" font-size="24">
+      <text x="815" y="202">finished</text>
+      <text x="815" y="362">truncated</text>
+      <text x="815" y="522">tool_call</text>
+      <text x="815" y="682">other</text>
+    </g>
+
+    <rect x="950" y="160" width="570" height="110" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="980" y="208" font-size="28" font-weight="600">Print the draft</text>
+    <text x="980" y="246" font-size="22">then the footer: stop, tokens, cost</text>
+
+    <rect x="950" y="320" width="570" height="110" rx="14" fill="#1E293B" stroke="#F43F5E" stroke-width="3"/>
+    <text x="980" y="368" font-size="28" font-weight="600">[truncated] warning</text>
+    <text x="980" y="406" font-size="22">cut off at the cap: do not send it as is</text>
+
+    <rect x="950" y="480" width="570" height="110" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2" stroke-dasharray="10 8"/>
+    <text x="980" y="528" font-size="28" font-weight="600">Not yet possible</text>
+    <text x="980" y="566" font-size="22">no tools are sent; Chapter 6 adds them</text>
+
+    <rect x="950" y="640" width="570" height="110" rx="14" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="980" y="688" font-size="28" font-weight="600">[stopped] warning</text>
+    <text x="980" y="726" font-size="22">for example a refusal: labelled, not a crash</text>
+
+    <text x="80" y="840" font-size="22">Provider values (end_turn, max_tokens, tool_use, refusal …) are mapped inside the adapter only.</text>
+  </g>
+</svg>

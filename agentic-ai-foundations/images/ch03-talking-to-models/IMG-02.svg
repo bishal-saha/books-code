@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">Only the adapter knows the provider SDK</title>
+  <desc id="d">The draft_reply CLI and the pytest tests depend only on the ModelClient protocol, which has complete and stream. Two classes implement it. AnthropicAdapter reads Settings from environment variables and is the only code that imports the anthropic SDK, which calls the Messages API. FakeModelClient returns scripted replies and errors with no network and no key.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="96" font-size="40" font-weight="600">Everything above the adapter speaks the book's own types</text>
+
+    <rect x="300" y="150" width="340" height="96" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="470" y="208" font-size="28" font-weight="600" text-anchor="middle">draft_reply CLI</text>
+    <rect x="960" y="150" width="340" height="96" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="1130" y="208" font-size="28" font-weight="600" text-anchor="middle">pytest tests</text>
+
+    <rect x="500" y="330" width="600" height="120" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="800" y="382" font-size="30" font-weight="600" text-anchor="middle">ModelClient (Protocol)</text>
+    <text x="800" y="422" font-size="24" text-anchor="middle" font-family="'JetBrains Mono', ui-monospace, monospace">complete() · stream()</text>
+    <line x1="470" y1="248" x2="640" y2="324" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <line x1="1130" y1="248" x2="960" y2="324" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <rect x="240" y="540" width="460" height="110" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="470" y="590" font-size="28" font-weight="600" text-anchor="middle">AnthropicAdapter</text>
+    <text x="470" y="626" font-size="22" text-anchor="middle">the only SDK import</text>
+    <rect x="900" y="540" width="460" height="110" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="1130" y="590" font-size="28" font-weight="600" text-anchor="middle">FakeModelClient</text>
+    <text x="1130" y="626" font-size="22" text-anchor="middle">no network, no key</text>
+    <g stroke="#CBD5E1" stroke-width="2" stroke-dasharray="10 8" fill="none">
+      <line x1="470" y1="536" x2="640" y2="456" marker-end="url(#arrow)"/>
+      <line x1="1130" y1="536" x2="960" y2="456" marker-end="url(#arrow)"/>
+    </g>
+    <text x="800" y="510" font-size="22" text-anchor="middle">implement</text>
+
+    <rect x="40" y="380" width="300" height="90" rx="14" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="190" y="420" font-size="26" font-weight="600" text-anchor="middle">Settings</text>
+    <text x="190" y="452" font-size="22" text-anchor="middle">environment / .env</text>
+    <line x1="230" y1="472" x2="330" y2="534" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <rect x="240" y="740" width="210" height="90" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="345" y="796" font-size="26" font-weight="600" text-anchor="middle">anthropic SDK</text>
+    <rect x="530" y="740" width="250" height="90" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="655" y="796" font-size="26" font-weight="600" text-anchor="middle">Messages API</text>
+    <line x1="345" y1="652" x2="345" y2="734" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <line x1="452" y1="785" x2="524" y2="785" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <rect x="900" y="740" width="460" height="90" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="1130" y="796" font-size="26" font-weight="600" text-anchor="middle">Scripted replies and errors</text>
+    <line x1="1130" y1="652" x2="1130" y2="734" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+  </g>
+</svg>
