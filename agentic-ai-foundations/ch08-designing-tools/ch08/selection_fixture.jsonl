@@ -1,0 +1,6 @@
+{"request": "Is order O-0013833 late?", "expected": {"v1": ["get_shipment", "get_order"], "v2": ["get_delivery_status"]}}
+{"request": "Ticket T-000281 asks where the order is. Was it late?", "expected": {"v1": ["get_ticket"], "v2": ["get_delivery_status"]}, "ticket_to_delivery": true}
+{"request": "What does ticket T-000281 say? Quote the customer.", "expected": {"v1": ["get_ticket"], "v2": ["get_ticket"]}}
+{"request": "Which Swiftway Parcel shipments are late?", "expected": {"v1": ["list_shipments"], "v2": ["list_shipments"]}}
+{"request": "How many days do consumers have to return an item?", "expected": {"v1": ["get_policy"], "v2": ["get_policy"]}}
+{"request": "Ticket T-000410 wants to return 1 x SKU-00042, it doesn't fit. Set up the return.", "expected": {"v2": ["create_return_authorisation", "get_ticket"]}}

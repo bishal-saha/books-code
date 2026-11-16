@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">A repeated return gets the stored authorisation</title>
+  <desc id="d">Sequence diagram with four lanes: the model, the program (create_return_authorisation), the return store and the Kestrel mock. First call: the model asks for a return for ticket T-000410 with two of SKU-00042. The program derives key K from the ticket and the merged lines and looks it up; the store says not found. Only then does the program check the ticket, order, shipment and returns policy in the mock: delivered, inside the 30-day window. It inserts a pending row under K and returns RA-…, pending, already_existed false. Second call, later: the same return with the two units split across two lines. The program derives the same key K, the store finds the row, and the program returns the same RA-… with already_existed true, without running the checks again.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="76" font-size="40" font-weight="600">Key look-up first, checks only for a new key</text>
+
+    <rect x="80" y="110" width="250" height="66" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="205" y="153" font-size="28" font-weight="600" text-anchor="middle">Model</text>
+    <rect x="470" y="110" width="290" height="66" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="615" y="153" font-size="28" font-weight="600" text-anchor="middle">Program</text>
+    <rect x="900" y="110" width="270" height="66" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="1035" y="153" font-size="28" font-weight="600" text-anchor="middle">Return store</text>
+    <rect x="1290" y="110" width="250" height="66" rx="14" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="1415" y="153" font-size="28" font-weight="600" text-anchor="middle">Kestrel mock</text>
+
+    <g stroke="#334155" stroke-width="2" stroke-dasharray="8 8">
+      <line x1="205" y1="176" x2="205" y2="860"/>
+      <line x1="615" y1="176" x2="615" y2="860"/>
+      <line x1="1035" y1="176" x2="1035" y2="860"/>
+      <line x1="1415" y1="176" x2="1415" y2="860"/>
+    </g>
+
+    <g stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)">
+      <line x1="210" y1="240" x2="605" y2="240"/>
+      <line x1="620" y1="300" x2="1025" y2="300"/>
+      <line x1="1030" y1="350" x2="625" y2="350"/>
+      <line x1="620" y1="410" x2="1405" y2="410"/>
+      <line x1="1410" y1="460" x2="625" y2="460"/>
+      <line x1="620" y1="515" x2="1025" y2="515"/>
+      <line x1="610" y1="570" x2="215" y2="570"/>
+      <line x1="210" y1="670" x2="605" y2="670"/>
+      <line x1="620" y1="730" x2="1025" y2="730"/>
+      <line x1="1030" y1="780" x2="625" y2="780"/>
+      <line x1="610" y1="835" x2="215" y2="835"/>
+    </g>
+
+    <g font-size="22" text-anchor="middle">
+      <text x="410" y="226">T-000410, 2 x SKU-00042</text>
+      <text x="825" y="286">look up key K</text>
+      <text x="825" y="340">not found</text>
+      <rect x="805" y="372" width="420" height="34" fill="#0B1530"/><text x="1015" y="398">ticket, order, shipment, returns policy</text>
+      <rect x="815" y="424" width="400" height="34" fill="#0B1530"/><text x="1015" y="450">delivered, inside the 30-day window</text>
+      <text x="825" y="503">insert pending under K</text>
+      <text x="410" y="558">RA-…, already_existed=false</text>
+      <text x="410" y="656">same return, split: 1 + 1</text>
+      <text x="825" y="718">same key K</text>
+      <text x="825" y="770">row found</text>
+      <text x="410" y="823">same RA-…, already_existed=true</text>
+    </g>
+    <rect x="1100" y="640" width="440" height="110" rx="14" fill="#111C3A" stroke="#F43F5E" stroke-width="2"/>
+    <text x="1320" y="684" font-size="22" text-anchor="middle">No checks on a repeat, so a</text>
+    <text x="1320" y="716" font-size="22" text-anchor="middle">closed window can't refuse it</text>
+    <line x1="80" y1="615" x2="1540" y2="615" stroke="#334155" stroke-width="2"/>
+    <text x="80" y="645" font-size="20" fill="#94A3B8">later</text>
+  </g>
+</svg>

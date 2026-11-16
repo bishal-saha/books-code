@@ -1,0 +1,6 @@
+# Written by `uv run kestrel up` (database, CSV exports, docs); regenerate it, never commit it.
+.kestrel/
+# Your local settings, with your API key.
+.env
+# The return store the demo writes (new in Chapter 8).
+returns.sqlite

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">Three tool granularities for one question</title>
+  <desc id="d">Three panels answer the same question, "Ticket T-000281: was the order late?". Left, too fine: the v1 tools need get_ticket, which returns the order id, then get_shipment, two tool calls in two steps. Middle, fits the question: the v2 tool get_delivery_status takes the ticket id and does the join in code, one tool call. Right, too coarse: operations_query with action, id and filters switches on action to orders, shipments, tickets or policies; its schema cannot say which fields each action needs.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="80" font-size="40" font-weight="600">One question, three tool granularities</text>
+    <text x="80" y="128" font-size="26" fill="#94A3B8">"Ticket T-000281: was the order late?"</text>
+
+    <!-- panels -->
+    <rect x="60" y="170" width="470" height="600" rx="18" fill="#111C3A" stroke="#F43F5E" stroke-width="3"/>
+    <rect x="565" y="170" width="470" height="600" rx="18" fill="#111C3A" stroke="#14B8A6" stroke-width="3"/>
+    <rect x="1070" y="170" width="470" height="600" rx="18" fill="#111C3A" stroke="#F59E0B" stroke-width="3"/>
+
+    <text x="295" y="228" font-size="30" font-weight="600" text-anchor="middle" fill="#FDA4AF">Too fine (v1)</text>
+    <text x="800" y="228" font-size="30" font-weight="600" text-anchor="middle" fill="#5EEAD4">Fits the question (v2)</text>
+    <text x="1305" y="228" font-size="30" font-weight="600" text-anchor="middle" fill="#FCD34D">Too coarse</text>
+
+    <!-- left: chain -->
+    <rect x="110" y="280" width="370" height="80" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="295" y="316" font-size="26" font-weight="600" text-anchor="middle">step 1: get_ticket</text>
+    <text x="295" y="346" font-size="22" text-anchor="middle" fill="#94A3B8">returns order O-0013833</text>
+    <rect x="110" y="440" width="370" height="80" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="295" y="476" font-size="26" font-weight="600" text-anchor="middle">step 2: get_shipment</text>
+    <text x="295" y="506" font-size="22" text-anchor="middle" fill="#94A3B8">returns late: true</text>
+    <line x1="295" y1="362" x2="295" y2="432" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="295" y="610" font-size="26" text-anchor="middle">2 tool calls, 2 steps</text>
+    <text x="295" y="660" font-size="22" text-anchor="middle" fill="#94A3B8">the model copies the id</text>
+    <text x="295" y="692" font-size="22" text-anchor="middle" fill="#94A3B8">between calls</text>
+
+    <!-- middle: one tool -->
+    <rect x="615" y="280" width="370" height="80" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="800" y="316" font-size="24" font-weight="600" text-anchor="middle">get_delivery_status</text>
+    <text x="800" y="346" font-size="22" text-anchor="middle" fill="#94A3B8">("T-000281")</text>
+    <rect x="645" y="430" width="310" height="120" rx="14" fill="#0B1530" stroke="#334155" stroke-width="2" stroke-dasharray="8 6"/>
+    <text x="800" y="470" font-size="22" text-anchor="middle" fill="#94A3B8">in code:</text>
+    <text x="800" y="502" font-size="22" text-anchor="middle" fill="#94A3B8">ticket → order</text>
+    <text x="800" y="532" font-size="22" text-anchor="middle" fill="#94A3B8">→ shipment</text>
+    <line x1="800" y1="362" x2="800" y2="422" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="800" y="610" font-size="26" text-anchor="middle">1 tool call</text>
+    <text x="800" y="660" font-size="22" text-anchor="middle" fill="#94A3B8">one result with</text>
+    <text x="800" y="692" font-size="22" text-anchor="middle" fill="#94A3B8">shipment_status and late</text>
+
+    <!-- right: switch -->
+    <rect x="1100" y="280" width="410" height="80" rx="14" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="1305" y="316" font-size="24" font-weight="600" text-anchor="middle">operations_query</text>
+    <text x="1305" y="346" font-size="22" text-anchor="middle" fill="#94A3B8">(action, id, filters)</text>
+    <line x1="1305" y1="362" x2="1305" y2="412" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="1225" y="418" width="160" height="56" rx="12" fill="#1E293B" stroke="#F59E0B" stroke-width="2"/>
+    <text x="1305" y="454" font-size="24" text-anchor="middle">action?</text>
+    <g font-size="22" text-anchor="middle">
+      <rect x="1095" y="510" width="200" height="46" rx="10" fill="#1E293B"/><text x="1195" y="541">orders</text>
+      <rect x="1315" y="510" width="200" height="46" rx="10" fill="#1E293B"/><text x="1415" y="541">shipments</text>
+      <rect x="1095" y="568" width="200" height="46" rx="10" fill="#1E293B"/><text x="1195" y="599">tickets</text>
+      <rect x="1315" y="568" width="200" height="46" rx="10" fill="#1E293B"/><text x="1415" y="599">policies</text>
+    </g>
+    <text x="1305" y="660" font-size="22" text-anchor="middle" fill="#94A3B8">filters: a loose bag</text>
+    <text x="1305" y="692" font-size="22" text-anchor="middle" fill="#94A3B8">the model fills by guessing</text>
+
+    <text x="800" y="830" font-size="24" text-anchor="middle" fill="#CBD5E1">Boundaries around the question, not the endpoints</text>
+  </g>
+</svg>
