@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">The token and cost side of a per-question budget</title>
+  <desc id="d">Before each model call, code computes the worst case from the counted input and max_tokens and refuses the call if it could cross the money limit. After each call, code reads the reported input and output tokens, adds them to running totals, prices them from configured rates, and either continues to the next call or stops the run when a token or money limit is reached. The model is never asked to respect the limits.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="96" font-size="40" font-weight="600">Code enforces the budget, before and after every call</text>
+    <text x="80" y="140" font-size="22">Token and money side only; Chapters 7, 14 and 16 add steps and time and build the loop.</text>
+
+    <!-- 1 worst case check -->
+    <rect x="80" y="300" width="300" height="150" rx="14" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="230" y="350" font-size="27" font-weight="600" text-anchor="middle">Worst case first</text>
+    <text x="230" y="390" font-size="22" text-anchor="middle">counted input</text>
+    <text x="230" y="420" font-size="22" text-anchor="middle">+ max_tokens, priced</text>
+
+    <!-- 2 model call -->
+    <rect x="450" y="335" width="230" height="80" rx="40" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="565" y="385" font-size="28" font-weight="600" text-anchor="middle">Model call</text>
+
+    <!-- 3 usage -->
+    <rect x="750" y="300" width="270" height="150" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="885" y="350" font-size="27" font-weight="600" text-anchor="middle">Reported usage</text>
+    <text x="885" y="390" font-size="22" text-anchor="middle">input tokens</text>
+    <text x="885" y="420" font-size="22" text-anchor="middle">output tokens</text>
+
+    <!-- 4 totals -->
+    <rect x="1090" y="300" width="270" height="150" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="1225" y="350" font-size="27" font-weight="600" text-anchor="middle">Running totals</text>
+    <text x="1225" y="390" font-size="22" text-anchor="middle">tokens, and cost from</text>
+    <text x="1225" y="420" font-size="22" text-anchor="middle">configured prices</text>
+
+    <!-- 5 decision -->
+    <path d="M1460 300 L1540 375 L1460 450 L1380 375 Z" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="1460" y="368" font-size="22" font-weight="600" text-anchor="middle">Over a</text>
+    <text x="1460" y="394" font-size="22" font-weight="600" text-anchor="middle">limit?</text>
+
+    <!-- arrows along the row -->
+    <line x1="380" y1="375" x2="444" y2="375" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="388" y="360" font-size="22">fits</text>
+    <line x1="680" y1="375" x2="744" y2="375" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <line x1="1020" y1="375" x2="1084" y2="375" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <line x1="1360" y1="375" x2="1376" y2="375" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <!-- loop back: no -->
+    <path d="M1460 450 L1460 560 L230 560 L230 456" fill="none" stroke="#CBD5E1" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+    <text x="845" y="545" font-size="24" text-anchor="middle">No: next call</text>
+
+    <!-- stop -->
+    <rect x="620" y="680" width="420" height="110" rx="14" fill="#1E293B" stroke="#F43F5E" stroke-width="3"/>
+    <text x="830" y="728" font-size="28" font-weight="600" text-anchor="middle">Stop the run</text>
+    <text x="830" y="766" font-size="22" text-anchor="middle">report which limit was hit</text>
+    <path d="M1540 375 L1570 375 L1570 735 L1046 735" fill="none" stroke="#F43F5E" stroke-width="3" stroke-linejoin="round" marker-end="url(#arrow)"/>
+    <text x="1300" y="720" font-size="24" text-anchor="middle">Yes</text>
+    <path d="M130 450 L130 735 L614 735" fill="none" stroke="#F43F5E" stroke-width="2" stroke-dasharray="10 8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+    <text x="150" y="700" font-size="22">could cross the money limit: refuse</text>
+  </g>
+</svg>

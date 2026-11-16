@@ -1,0 +1,92 @@
+[
+  {
+    "id": "msg_fixture_01",
+    "type": "message",
+    "role": "assistant",
+    "model": "test-model",
+    "content": [
+      {
+        "type": "text",
+        "text": "Consumers have 30 days from delivery to return an unused item."
+      }
+    ],
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 180,
+      "output_tokens": 16
+    }
+  },
+  {
+    "id": "msg_fixture_02",
+    "type": "message",
+    "role": "assistant",
+    "model": "test-model",
+    "content": [
+      {
+        "type": "text",
+        "text": "A consumer may return an unused item within 30 days of delivery for a full refund."
+      }
+    ],
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 180,
+      "output_tokens": 20
+    }
+  },
+  {
+    "id": "msg_fixture_03",
+    "type": "message",
+    "role": "assistant",
+    "model": "test-model",
+    "content": [
+      {
+        "type": "text",
+        "text": "Consumers have 30 days from delivery to return an unused item."
+      }
+    ],
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 180,
+      "output_tokens": 16
+    }
+  },
+  {
+    "id": "msg_fixture_04",
+    "type": "message",
+    "role": "assistant",
+    "model": "test-model",
+    "content": [
+      {
+        "type": "text",
+        "text": "Consumers may return unused items within"
+      }
+    ],
+    "stop_reason": "max_tokens",
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 180,
+      "output_tokens": 8
+    }
+  },
+  {
+    "id": "msg_fixture_05",
+    "type": "message",
+    "role": "assistant",
+    "model": "test-model",
+    "content": [
+      {
+        "type": "text",
+        "text": "Consumers have 30 days from delivery to return an unused item."
+      }
+    ],
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 180,
+      "output_tokens": 16
+    }
+  }
+]

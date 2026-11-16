@@ -1,0 +1,23 @@
+[
+  {
+    "id": "msg_fixture_10",
+    "type": "message",
+    "role": "assistant",
+    "model": "test-model",
+    "content": [
+      {
+        "type": "text",
+        "text": "Only the damaged tent can go back: trade customers have 14 days, so the unused stove (20 days) is out of time. Kestrel pays return shipping for the damaged item. The refund is above USD 500, so Finance approves it."
+      }
+    ],
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 230,
+      "output_tokens": 62,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      }
+    }
+  }
+]

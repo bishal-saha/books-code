@@ -1,0 +1,28 @@
+[
+  {
+    "id": "msg_fixture_11",
+    "type": "message",
+    "role": "assistant",
+    "model": "test-model",
+    "content": [
+      {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "fixture-signature"
+      },
+      {
+        "type": "text",
+        "text": "The damaged tent qualifies; the unused stove does not, because trade customers have 14 days. Kestrel pays return shipping for the damaged tent. Above USD 500, Finance approves the refund."
+      }
+    ],
+    "stop_reason": "end_turn",
+    "stop_sequence": null,
+    "usage": {
+      "input_tokens": 230,
+      "output_tokens": 940,
+      "output_tokens_details": {
+        "thinking_tokens": 890
+      }
+    }
+  }
+]

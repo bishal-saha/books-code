@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">Where reasoning tokens go in a call</title>
+  <desc id="d">Two bars show one call each inside the same context window. The standard call holds input tokens, then answer tokens. The reasoning call holds input tokens, then thinking tokens, then answer tokens. In both, the output side is capped by max_tokens; in the reasoning call the thinking tokens and the answer share that cap and both are billed at the output rate. Input is billed at the input rate.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="96" font-size="40" font-weight="600">Thinking tokens come out of max_tokens</text>
+
+    <!-- window outline label -->
+    <text x="80" y="170" font-size="24">One context window per call</text>
+
+    <!-- standard call -->
+    <text x="80" y="250" font-size="28" font-weight="600">Standard call</text>
+    <rect x="80" y="275" width="1440" height="110" rx="14" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="10 8"/>
+    <rect x="80" y="275" width="560" height="110" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="360" y="340" font-size="27" font-weight="600" text-anchor="middle">Input</text>
+    <rect x="650" y="275" width="300" height="110" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="800" y="340" font-size="27" font-weight="600" text-anchor="middle">Answer</text>
+    <text x="1230" y="340" font-size="22" text-anchor="middle">unused space</text>
+
+    <!-- reasoning call -->
+    <text x="80" y="510" font-size="28" font-weight="600">Reasoning call</text>
+    <rect x="80" y="535" width="1440" height="110" rx="14" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="10 8"/>
+    <rect x="80" y="535" width="560" height="110" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="360" y="600" font-size="27" font-weight="600" text-anchor="middle">Input</text>
+    <rect x="650" y="535" width="520" height="110" rx="14" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="910" y="600" font-size="27" font-weight="600" text-anchor="middle">Thinking tokens</text>
+    <rect x="1180" y="535" width="300" height="110" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="1330" y="600" font-size="27" font-weight="600" text-anchor="middle">Answer</text>
+
+    <!-- max_tokens bracket -->
+    <path d="M650 680 L650 700 L1480 700 L1480 680" fill="none" stroke="#CBD5E1" stroke-width="3" stroke-linejoin="round"/>
+    <text x="1065" y="745" font-size="26" font-weight="600" text-anchor="middle">max_tokens: thinking and answer share it</text>
+    <text x="1065" y="785" font-size="22" text-anchor="middle">all billed at the output rate</text>
+    <path d="M80 680 L80 700 L640 700 L640 680" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linejoin="round"/>
+    <text x="360" y="745" font-size="22" text-anchor="middle">billed at the input rate</text>
+
+    <path d="M650 420 L650 440 L1480 440 L1480 420" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linejoin="round"/>
+    <text x="1065" y="474" font-size="22" text-anchor="middle">max_tokens reserves the output side</text>
+  </g>
+</svg>
