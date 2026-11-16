@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">Each model call is shrunk to what the run has left</title>
+  <desc id="d">Sequence diagram with three lanes: run_agent, BudgetTracker and the model client, using the chapter's time-limit test: a 60 second run budget and a 30 second per-call timeout. Before step 2, run_agent asks the tracker to check the budget. The tracker answers that there is room: 40 seconds used, 20 left. run_agent calls the model with timeout equal to the smaller of 30 and 20, so 20 seconds, and max output tokens equal to the smaller of the configured cap and the tokens left. A note says SDK retries happen inside this call and can stretch it past the timeout. The model client returns the response with its usage, and run_agent records the usage in the tracker. Before step 3 the check runs again; with less than one second left it returns TIME_LIMIT and no model call is made.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="80" font-size="40" font-weight="600">Each call is shrunk to what the run has left</text>
+
+    <!-- lane heads -->
+    <rect x="130" y="120" width="300" height="72" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="280" y="166" font-size="28" font-weight="600" text-anchor="middle">run_agent</text>
+    <rect x="650" y="120" width="300" height="72" rx="14" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="800" y="166" font-size="28" font-weight="600" text-anchor="middle">BudgetTracker</text>
+    <rect x="1170" y="120" width="300" height="72" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="1320" y="166" font-size="28" font-weight="600" text-anchor="middle">Model client</text>
+
+    <!-- lifelines -->
+    <g stroke="#334155" stroke-width="2" stroke-dasharray="8 8">
+      <line x1="280" y1="192" x2="280" y2="850"/>
+      <line x1="800" y1="192" x2="800" y2="850"/>
+      <line x1="1320" y1="192" x2="1320" y2="850"/>
+    </g>
+
+    <g stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)">
+      <line x1="285" y1="265" x2="790" y2="265"/>
+      <line x1="795" y1="345" x2="290" y2="345"/>
+      <line x1="285" y1="460" x2="1310" y2="460"/>
+      <line x1="1315" y1="640" x2="290" y2="640"/>
+      <line x1="285" y1="715" x2="790" y2="715"/>
+      <line x1="285" y1="800" x2="790" y2="800"/>
+    </g>
+
+    <text x="540" y="250" font-size="24" text-anchor="middle">1. check() before step 2</text>
+    <text x="540" y="330" font-size="24" text-anchor="middle">2. room left: 40 s used, 20 s left</text>
+    <rect x="420" y="390" width="760" height="38" fill="#0B1530"/>
+    <text x="800" y="418" font-size="24" text-anchor="middle">3. complete(timeout = min(30, 20) = 20 s,</text>
+    <rect x="430" y="425" width="740" height="30" fill="#0B1530"/>
+    <text x="800" y="448" font-size="24" text-anchor="middle">max_tokens = min(cap, tokens left))</text>
+    <rect x="610" y="600" width="380" height="34" fill="#0B1530"/>
+    <text x="800" y="625" font-size="24" text-anchor="middle">4. response + usage</text>
+    <text x="540" y="700" font-size="24" text-anchor="middle">5. record(usage)</text>
+    <text x="540" y="785" font-size="24" text-anchor="middle">6. check() before step 3</text>
+    <text x="1000" y="808" font-size="24" fill="#F59E0B">TIME_LIMIT: no call made</text>
+
+    <!-- note -->
+    <rect x="1000" y="490" width="520" height="96" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="1030" y="530" font-size="22">SDK retries happen inside this call</text>
+    <text x="1030" y="564" font-size="22">and can stretch it past the timeout.</text>
+  </g>
+</svg>

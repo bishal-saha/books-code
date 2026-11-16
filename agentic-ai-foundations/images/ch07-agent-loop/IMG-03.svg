@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">A failed lookup goes back to the model as a result</title>
+  <desc id="d">Sequence diagram with four lanes: the model, run_agent, the tool registry and the Kestrel API, from step 1 of the chased-orders run. The model's response has stop reason tool_call and four get_order calls: O-0014614, O-0004943, O-0004365 and O-9999999. run_agent dispatches each call to the registry, one after another. The registry calls GET /orders/{id} on the Kestrel API: three return the order, one returns 404. The registry turns the three orders into results wrapped in data tags and the 404 into an error result, No order O-9999999 exists, with is_error true. run_agent sends all four results back in one user message, in call order. In step 2 the model carries on and asks for the shipments of the two orders that have shipped.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="80" font-size="40" font-weight="600">A failed lookup becomes a result, not a crash</text>
+
+    <!-- lane heads -->
+    <rect x="80" y="120" width="270" height="72" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="215" y="166" font-size="28" font-weight="600" text-anchor="middle">Model</text>
+    <rect x="490" y="120" width="270" height="72" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="625" y="166" font-size="28" font-weight="600" text-anchor="middle">run_agent</text>
+    <rect x="900" y="120" width="270" height="72" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="1035" y="166" font-size="28" font-weight="600" text-anchor="middle">Tool registry</text>
+    <rect x="1250" y="120" width="270" height="72" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="1385" y="166" font-size="28" font-weight="600" text-anchor="middle">Kestrel API</text>
+
+    <!-- lifelines -->
+    <g stroke="#334155" stroke-width="2" stroke-dasharray="8 8">
+      <line x1="215" y1="192" x2="215" y2="850"/>
+      <line x1="625" y1="192" x2="625" y2="850"/>
+      <line x1="1035" y1="192" x2="1035" y2="850"/>
+      <line x1="1385" y1="192" x2="1385" y2="850"/>
+    </g>
+
+    <g stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)">
+      <line x1="220" y1="290" x2="615" y2="290"/>
+      <line x1="630" y1="370" x2="1025" y2="370"/>
+      <line x1="1040" y1="440" x2="1375" y2="440"/>
+      <line x1="1380" y1="520" x2="1045" y2="520"/>
+      <line x1="1030" y1="630" x2="635" y2="630"/>
+      <line x1="620" y1="730" x2="225" y2="730"/>
+      <line x1="220" y1="820" x2="615" y2="820"/>
+    </g>
+
+    <text x="417" y="248" font-size="24" text-anchor="middle">1. tool_call: 4x get_order</text>
+    <text x="417" y="276" font-size="22" text-anchor="middle" fill="#F59E0B">…4614, …4943, …4365, O-9999999</text>
+    <text x="827" y="355" font-size="24" text-anchor="middle">2. dispatch, one by one</text>
+    <text x="1210" y="425" font-size="24" text-anchor="middle">3. GET /orders/{id}</text>
+    <text x="1210" y="505" font-size="24" text-anchor="middle">4. 3 orders, one 404</text>
+    <rect x="585" y="558" width="485" height="36" fill="#0B1530"/>
+    <text x="827" y="585" font-size="24" text-anchor="middle">5. three results in &lt;data&gt; tags, one error</text>
+    <text x="827" y="615" font-size="22" text-anchor="middle" fill="#F43F5E">is_error: No order O-9999999 exists.</text>
+    <text x="420" y="688" font-size="24" text-anchor="middle">6. one user message,</text>
+    <text x="420" y="716" font-size="24" text-anchor="middle">4 results in call order</text>
+    <text x="417" y="805" font-size="24" text-anchor="middle">7. step 2: get_shipment x2</text>
+
+    <!-- note -->
+    <rect x="900" y="700" width="620" height="110" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="930" y="745" font-size="22">The run carries on: the model reports the</text>
+    <text x="930" y="779" font-size="22">missing order and works on the other three.</text>
+  </g>
+</svg>
