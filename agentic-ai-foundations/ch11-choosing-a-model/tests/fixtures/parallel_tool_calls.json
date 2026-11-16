@@ -1,0 +1,38 @@
+{
+  "id": "chatcmpl-fake",
+  "object": "chat.completion",
+  "model": "hand-written-fixture",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_1",
+            "type": "function",
+            "function": {
+              "name": "get_stock",
+              "arguments": "{\"sku\": \"SKU-00042\"}"
+            }
+          },
+          {
+            "id": "call_2",
+            "type": "function",
+            "function": {
+              "name": "get_stock",
+              "arguments": "{\"sku\": \"SKU-00043\"}"
+            }
+          }
+        ]
+      },
+      "finish_reason": "tool_calls"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 120,
+    "completion_tokens": 30,
+    "total_tokens": 150
+  }
+}

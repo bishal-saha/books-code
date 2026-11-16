@@ -1,0 +1,30 @@
+{
+  "id": "chatcmpl-fake",
+  "object": "chat.completion",
+  "model": "hand-written-fixture",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": null,
+        "tool_calls": [
+          {
+            "id": "call_1",
+            "type": "function",
+            "function": {
+              "name": "get_order",
+              "arguments": "{\"order_id\": \"O-00"
+            }
+          }
+        ]
+      },
+      "finish_reason": "length"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 120,
+    "completion_tokens": 30,
+    "total_tokens": 150
+  }
+}

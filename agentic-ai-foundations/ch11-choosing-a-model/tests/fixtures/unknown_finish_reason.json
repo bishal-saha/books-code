@@ -1,0 +1,20 @@
+{
+  "id": "chatcmpl-fake",
+  "object": "chat.completion",
+  "model": "hand-written-fixture",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "I can't help with that."
+      },
+      "finish_reason": "content_filter"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 120,
+    "completion_tokens": 30,
+    "total_tokens": 150
+  }
+}

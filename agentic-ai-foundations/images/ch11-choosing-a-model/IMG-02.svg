@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">The money check before each model call</title>
+  <desc id="d">Sequence diagram of the money limit Chapter 16 adds to the agent loop, built from this chapter's pricing functions. Before each call the loop asks the adapter's count_tokens for the next request's input tokens, then computes next_call_ceiling from those tokens, the output limit and the configuration's price. If spend so far plus that ceiling exceeds the money limit, the run stops with a money stop cause. Otherwise the loop calls complete, receives the response and its usage, computes cost_of from the usage, and adds it to the spend so far.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="80" font-size="40" font-weight="600">The money check before each call (Chapter 16)</text>
+
+    <!-- participants -->
+    <rect x="80" y="120" width="300" height="70" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="230" y="165" font-size="26" font-weight="600" text-anchor="middle">Agent loop</text>
+    <rect x="500" y="120" width="300" height="70" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="650" y="165" font-size="26" font-weight="600" text-anchor="middle">Adapter</text>
+    <rect x="920" y="120" width="300" height="70" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="1070" y="165" font-size="26" font-weight="600" text-anchor="middle">pricing.py + price</text>
+    <rect x="1300" y="120" width="240" height="70" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="1420" y="165" font-size="26" font-weight="600" text-anchor="middle">Model</text>
+
+    <!-- lifelines -->
+    <g stroke="#334155" stroke-width="2" stroke-dasharray="8 8">
+      <path d="M230 190 V820"/><path d="M650 190 V820"/><path d="M1070 190 V820"/><path d="M1420 190 V820"/>
+    </g>
+
+    <!-- messages -->
+    <g stroke="#CBD5E1" stroke-width="3" fill="none">
+      <path d="M230 245 H640" marker-end="url(#arrow)"/>
+      <path d="M650 300 H240" stroke-width="2" stroke-dasharray="10 6" marker-end="url(#arrow)"/>
+      <path d="M230 355 H1060" marker-end="url(#arrow)"/>
+      <path d="M1070 410 H240" stroke-width="2" stroke-dasharray="10 6" marker-end="url(#arrow)"/>
+      <path d="M230 615 H1410" marker-end="url(#arrow)"/>
+      <path d="M1420 670 H240" stroke-width="2" stroke-dasharray="10 6" marker-end="url(#arrow)"/>
+      <path d="M230 725 H1060" marker-end="url(#arrow)"/>
+      <path d="M1070 780 H240" stroke-width="2" stroke-dasharray="10 6" marker-end="url(#arrow)"/>
+    </g>
+    <text x="440" y="235" font-size="24" text-anchor="middle">count_tokens(next request)</text>
+    <text x="440" y="290" font-size="24" text-anchor="middle">input tokens (estimate)</text>
+    <text x="650" y="345" font-size="24" text-anchor="middle">next_call_ceiling(tokens, output limit)</text>
+    <text x="650" y="400" font-size="24" text-anchor="middle">worst-case cost of the call</text>
+
+    <!-- decision -->
+    <rect x="250" y="440" width="1270" height="120" rx="14" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="280" y="488" font-size="26" font-weight="600">spent + ceiling &gt; money limit?</text>
+    <text x="280" y="530" font-size="24">no: make the call</text>
+    <rect x="980" y="458" width="510" height="84" rx="14" fill="#0B1530" stroke="#F43F5E" stroke-width="3"/>
+    <text x="1235" y="494" font-size="24" font-weight="600" text-anchor="middle">yes: stop before calling</text>
+    <text x="1235" y="526" font-size="22" text-anchor="middle">(a money stop cause, Chapter 16)</text>
+
+    <text x="820" y="605" font-size="24" text-anchor="middle">complete(request)</text>
+    <text x="820" y="660" font-size="24" text-anchor="middle">response + usage</text>
+    <text x="650" y="715" font-size="24" text-anchor="middle">cost_of(usage)</text>
+    <text x="650" y="770" font-size="24" text-anchor="middle">actual cost: spent += cost</text>
+
+    <text x="80" y="860" font-size="22">Check with the ceiling before the call; record the actual cost from usage after it.</text>
+  </g>
+</svg>
