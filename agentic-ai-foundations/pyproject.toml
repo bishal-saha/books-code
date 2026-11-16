@@ -1,0 +1,23 @@
+[project]
+name = "agentic-ai-foundations"
+version = "0.1.0"
+description = "Companion code for the free book Agentic AI Foundations on iambishal.com"
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=2.8,<3",
+    "pydantic>=2.14,<3",
+    "httpx>=0.28,<1",
+    "kestrel-outfitters",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[tool.uv.sources]
+kestrel-outfitters = { path = "../_shared/kestrel", editable = true }
+
+[tool.pytest.ini_options]
+testpaths = ["."]
+python_files = ["test_*.py"]
+markers = ["live: calls a real model or API; run only with scripts/live_check.py"]
+addopts = "-m 'not live' --import-mode=importlib"

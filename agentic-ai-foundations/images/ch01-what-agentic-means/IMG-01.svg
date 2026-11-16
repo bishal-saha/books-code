@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">The chapter 1 environment: one local Kestrel mock API</title>
+  <desc id="d">The command uv run kestrel up builds the seeded data, writes a .kestrel folder with kestrel.sqlite, CSV exports and policy documents, and serves one read-only mock API at 127.0.0.1:8700 with health, ticket, order, shipment, stock and policy endpoints. The smoke test and the order-status workflow, which makes no model call, both call that API over HTTP with httpx and a 5-second timeout.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="96" font-size="40" font-weight="600">One local mock API for every chapter</text>
+
+    <!-- Command -->
+    <rect x="80" y="180" width="400" height="76" rx="38" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="280" y="228" font-size="28" font-weight="600" text-anchor="middle" font-family="'JetBrains Mono', ui-monospace, monospace">uv run kestrel up</text>
+
+    <!-- Seed -->
+    <path d="M150 340 a130 22 0 0 0 260 0 v84 a130 22 0 0 1 -260 0 z" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <ellipse cx="280" cy="340" rx="130" ry="22" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="280" y="402" font-size="26" text-anchor="middle">Fixed seed data</text>
+    <line x1="280" y1="258" x2="280" y2="312" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+
+    <!-- Workspace folder -->
+    <path d="M100 580 a180 24 0 0 0 360 0 v150 a180 24 0 0 1 -360 0 z" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <ellipse cx="280" cy="580" rx="180" ry="24" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="280" y="640" font-size="28" font-weight="600" text-anchor="middle">.kestrel/ folder</text>
+    <text x="280" y="680" font-size="22" text-anchor="middle">kestrel.sqlite · exports/*.csv</text>
+    <text x="280" y="712" font-size="22" text-anchor="middle">docs/*.md (policies)</text>
+    <line x1="280" y1="448" x2="280" y2="548" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="300" y="506" font-size="22">writes</text>
+
+    <!-- API -->
+    <rect x="620" y="170" width="440" height="560" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="840" y="226" font-size="28" font-weight="600" text-anchor="middle">Kestrel mock API</text>
+    <text x="840" y="264" font-size="22" text-anchor="middle">http://127.0.0.1:8700 · read-only</text>
+    <line x1="650" y1="290" x2="1030" y2="290" stroke="#334155" stroke-width="2"/>
+    <g font-size="24" font-family="'JetBrains Mono', ui-monospace, monospace">
+      <text x="660" y="338">GET /health</text>
+      <text x="660" y="388">/tickets/{id}</text>
+      <text x="660" y="438">/orders/{id}</text>
+      <text x="660" y="488">/orders/{id}/shipment</text>
+      <text x="660" y="538">/shipments?late=</text>
+      <text x="660" y="588">/stock/{sku}</text>
+      <text x="660" y="638">/policies/{name}</text>
+    </g>
+    <text x="840" y="696" font-size="22" text-anchor="middle">unknown ID → 404</text>
+    <path d="M410 382 C 520 382, 520 330, 616 330" fill="none" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="440" y="316" font-size="22">serves</text>
+
+    <!-- Callers -->
+    <rect x="1180" y="230" width="340" height="140" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="1350" y="292" font-size="28" font-weight="600" text-anchor="middle">Smoke test</text>
+    <text x="1350" y="332" font-size="22" text-anchor="middle">pytest · seeded records</text>
+
+    <rect x="1180" y="500" width="340" height="160" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="1350" y="560" font-size="28" font-weight="600" text-anchor="middle">Order-status</text>
+    <text x="1350" y="596" font-size="28" font-weight="600" text-anchor="middle">workflow</text>
+    <text x="1350" y="636" font-size="22" text-anchor="middle">no model call</text>
+
+    <line x1="1176" y1="300" x2="1066" y2="300" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <line x1="1176" y1="580" x2="1066" y2="580" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="1350" y="448" font-size="22" text-anchor="middle">HTTP via httpx,</text>
+    <text x="1350" y="476" font-size="22" text-anchor="middle">5-second timeout</text>
+
+    <text x="80" y="830" font-size="22">Same seed, same records for every reader. The capstone starter uses this setup too.</text>
+  </g>
+</svg>
