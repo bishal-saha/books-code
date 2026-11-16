@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">Sliding-window trimming drops whole units</title>
+  <desc id="d">Maya's history in her fourth turn, split into units. The pinned task, help me with ticket T-000407, always stays. Trimming drops five units from the oldest end as whole units: the get_ticket tool round, its reply, and the whole turn about order O-0006066 (question, tool round with get_order and get_shipment, reply). The kept window opens at a question, what can we offer the customer, followed by the get_policy tool round, its reply, the Swiftway Parcel question and its list_shipments tool round. The kept history is under the trim target. A tool call and its result are never separated.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="88" font-size="40" font-weight="600">Trimming drops whole units from the oldest end</text>
+
+    <!-- pinned task -->
+    <rect x="80" y="150" width="1440" height="90" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="110" y="206" font-size="28" font-weight="600">Pinned task (always kept): "Help me with ticket T-000407."</text>
+
+    <!-- dropped group -->
+    <rect x="80" y="290" width="660" height="430" rx="14" fill="none" stroke="#F43F5E" stroke-width="3" stroke-dasharray="10 8"/>
+    <text x="110" y="336" font-size="28" font-weight="600" fill="#FDA4AF">✕ Dropped: 5 units, each whole</text>
+
+    <rect x="110" y="365" width="600" height="90" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="140" y="420" font-size="26">Tool round: get_ticket call + result</text>
+    <rect x="110" y="475" width="600" height="90" rx="14" fill="#1E293B" stroke="#334155" stroke-width="3"/>
+    <text x="140" y="530" font-size="26">Reply about T-000407</text>
+    <rect x="110" y="585" width="600" height="110" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="140" y="630" font-size="26">Turn about O-0006066: question,</text>
+    <text x="140" y="670" font-size="26">get_order + get_shipment round, reply</text>
+
+    <!-- kept group -->
+    <rect x="860" y="290" width="660" height="430" rx="14" fill="none" stroke="#14B8A6" stroke-width="3"/>
+    <text x="890" y="336" font-size="28" font-weight="600" fill="#5EEAD4">✓ Kept window, opens at a question</text>
+
+    <rect x="890" y="365" width="600" height="90" rx="14" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="920" y="420" font-size="26">Question: what can we offer?</text>
+    <rect x="890" y="475" width="600" height="90" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="920" y="530" font-size="26">Tool round: 2x get_policy + results, reply</text>
+    <rect x="890" y="585" width="600" height="110" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="920" y="630" font-size="26">Question about Swiftway Parcel,</text>
+    <text x="920" y="670" font-size="26">list_shipments call + result</text>
+
+    <path d="M745 505 L 855 505" fill="none" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="800" y="490" font-size="22" text-anchor="middle">cut</text>
+
+    <!-- footer -->
+    <text x="80" y="790" font-size="26">Demo: 1,678 → 1,251 tokens, under the 1,500-token trim target.</text>
+    <text x="80" y="834" font-size="22">Never cut between a tool call and its result; later turns may only open at a question.</text>
+  </g>
+</svg>
