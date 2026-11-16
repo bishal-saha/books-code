@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">The expense-claim batch: the model extracts, code decides</title>
+  <desc id="d">Each of the seven claims in claims.jsonl goes to extract_claim, where the model fills ExpenseClaim and validate-and-retry checks it. A claim that still fails goes to the FAILED list. A validated ExpenseClaim goes to check_claim, which applies rules read from the Kestrel mock API's expense policy at GET /policies/expense-policy. Claims with flags such as OVER_LIMIT, MISSING_RECEIPT, NEEDS_CONVERSION or MISSING_DETAILS go to the top of the report, claims without flags below them, and Priya Nair decides on every one. The model never reads the policy.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="92" font-size="40" font-weight="600">The model extracts; plain code applies the policy</text>
+
+    <!-- claims store -->
+    <path d="M70 330 a120 22 0 0 0 240 0 v120 a120 22 0 0 1 -240 0 z" fill="#1E293B" stroke="#14B8A6" stroke-width="2"/>
+    <ellipse cx="190" cy="330" rx="120" ry="22" fill="#1E293B" stroke="#14B8A6" stroke-width="2"/>
+    <text x="190" y="402" font-size="26" font-weight="600" text-anchor="middle">claims.jsonl</text>
+    <text x="190" y="436" font-size="22" text-anchor="middle">7 free-text claims</text>
+
+    <!-- extract -->
+    <rect x="380" y="310" width="320" height="160" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="540" y="360" font-size="26" font-weight="600" text-anchor="middle">extract_claim</text>
+    <text x="540" y="400" font-size="22" text-anchor="middle">model fills ExpenseClaim</text>
+    <text x="540" y="434" font-size="22" text-anchor="middle">validate-and-retry</text>
+
+    <rect x="400" y="600" width="280" height="100" rx="14" fill="#1E293B" stroke="#F43F5E" stroke-width="2"/>
+    <text x="540" y="643" font-size="26" font-weight="600" text-anchor="middle">FAILED list</text>
+    <text x="540" y="678" font-size="22" text-anchor="middle">every attempt kept</text>
+
+    <!-- policy store -->
+    <path d="M790 160 a170 22 0 0 0 340 0 v90 a170 22 0 0 1 -340 0 z" fill="#1E293B" stroke="#14B8A6" stroke-width="2"/>
+    <ellipse cx="960" cy="160" rx="170" ry="22" fill="#1E293B" stroke="#14B8A6" stroke-width="2"/>
+    <text x="960" y="218" font-size="24" font-weight="600" text-anchor="middle">Kestrel mock API</text>
+    <text x="960" y="250" font-size="22" text-anchor="middle">/policies/expense-policy</text>
+
+    <!-- check -->
+    <rect x="800" y="330" width="320" height="120" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="2"/>
+    <text x="960" y="382" font-size="26" font-weight="600" text-anchor="middle">check_claim</text>
+    <text x="960" y="418" font-size="22" text-anchor="middle">plain, tested rules</text>
+
+    <!-- outcomes -->
+    <rect x="1200" y="250" width="330" height="130" rx="14" fill="#1E293B" stroke="#F59E0B" stroke-width="2"/>
+    <text x="1365" y="297" font-size="26" font-weight="600" text-anchor="middle">Flagged, listed first</text>
+    <text x="1365" y="333" font-size="22" text-anchor="middle">for example OVER_LIMIT,</text>
+    <text x="1365" y="361" font-size="22" text-anchor="middle">MISSING_RECEIPT</text>
+    <rect x="1200" y="430" width="330" height="100" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="1365" y="490" font-size="26" font-weight="600" text-anchor="middle">No flags</text>
+
+    <!-- Priya -->
+    <circle cx="1365" cy="640" r="30" fill="none" stroke="#F59E0B" stroke-width="3"/>
+    <path d="M1305 740 Q1305 680 1365 680 Q1425 680 1425 740" fill="none" stroke="#F59E0B" stroke-width="3"/>
+    <text x="1365" y="790" font-size="26" font-weight="600" text-anchor="middle">Priya decides</text>
+
+    <g stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)" stroke-linecap="round">
+      <line x1="310" y1="390" x2="372" y2="390"/>
+      <line x1="700" y1="390" x2="792" y2="390"/>
+      <line x1="960" y1="272" x2="960" y2="322"/>
+      <path d="M1120 370 Q1160 330 1192 320"/>
+      <path d="M1120 410 Q1160 470 1192 478"/>
+      <line x1="1365" y1="530" x2="1365" y2="600"/>
+      <path d="M1530 315 Q1570 315 1570 470 Q1570 640 1405 640"/>
+    </g>
+    <g stroke="#F43F5E" stroke-width="3" fill="none" marker-end="url(#arrow)" stroke-linecap="round">
+      <line x1="540" y1="470" x2="540" y2="592"/>
+    </g>
+    <g font-size="22">
+      <text x="746" y="375" text-anchor="middle">valid</text>
+      <text x="555" y="540" fill="#F43F5E">still invalid</text>
+    </g>
+    <text x="800" y="860" font-size="22" text-anchor="middle">The model never reads the policy, so no flag depends on the model comparing amounts.</text>
+  </g>
+</svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">Parallel tool calls, one reply</title>
+  <desc id="d">On the left, one assistant response with stop reason tool_call holds four get_order calls, ids toolu_fake_01 to 04, for orders O-0012682, O-0007023, O-0000141 and O-0017612. In the middle, the program dispatches each call. On the right, one user message holds four tool_result blocks whose tool_use_id values match the four calls, in the same order. That single message goes into the follow-up model call, which therefore carries three messages: the question, the assistant turn and the results.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="88" font-size="40" font-weight="600">Four calls in one response, four results in one message</text>
+
+    <!-- assistant response -->
+    <rect x="60" y="150" width="500" height="600" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="90" y="200" font-size="26" font-weight="600">Assistant response</text>
+    <text x="90" y="236" font-size="22">stop reason: tool_call</text>
+    <g font-size="22">
+      <rect x="90" y="270" width="440" height="96" rx="12" fill="#0B1530" stroke="#334155" stroke-width="2"/>
+      <text x="110" y="308">tool_use · toolu_fake_01</text><text x="110" y="344">get_order(O-0012682)</text>
+      <rect x="90" y="386" width="440" height="96" rx="12" fill="#0B1530" stroke="#334155" stroke-width="2"/>
+      <text x="110" y="424">tool_use · toolu_fake_02</text><text x="110" y="460">get_order(O-0007023)</text>
+      <rect x="90" y="502" width="440" height="96" rx="12" fill="#0B1530" stroke="#334155" stroke-width="2"/>
+      <text x="110" y="540">tool_use · toolu_fake_03</text><text x="110" y="576">get_order(O-0000141)</text>
+      <rect x="90" y="618" width="440" height="96" rx="12" fill="#0B1530" stroke="#334155" stroke-width="2"/>
+      <text x="110" y="656">tool_use · toolu_fake_04</text><text x="110" y="692">get_order(O-0017612)</text>
+    </g>
+
+    <!-- dispatch -->
+    <rect x="650" y="370" width="300" height="160" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="800" y="430" font-size="26" font-weight="600" text-anchor="middle">dispatch()</text>
+    <text x="800" y="466" font-size="22" text-anchor="middle">once per call,</text>
+    <text x="800" y="496" font-size="22" text-anchor="middle">Kestrel API</text>
+    <g stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)">
+      <line x1="560" y1="450" x2="642" y2="450"/>
+      <line x1="950" y1="450" x2="1032" y2="450"/>
+    </g>
+
+    <!-- user message -->
+    <rect x="1040" y="150" width="500" height="600" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="1070" y="200" font-size="26" font-weight="600">ONE user message</text>
+    <text x="1070" y="236" font-size="22">four tool_result blocks</text>
+    <g font-size="22">
+      <rect x="1070" y="270" width="440" height="96" rx="12" fill="#0B1530" stroke="#F59E0B" stroke-width="2"/>
+      <text x="1090" y="308">tool_use_id toolu_fake_01</text><text x="1090" y="344">delivered</text>
+      <rect x="1070" y="386" width="440" height="96" rx="12" fill="#0B1530" stroke="#F59E0B" stroke-width="2"/>
+      <text x="1090" y="424">tool_use_id toolu_fake_02</text><text x="1090" y="460">returned</text>
+      <rect x="1070" y="502" width="440" height="96" rx="12" fill="#0B1530" stroke="#F59E0B" stroke-width="2"/>
+      <text x="1090" y="540">tool_use_id toolu_fake_03</text><text x="1090" y="576">shipped (open)</text>
+      <rect x="1070" y="618" width="440" height="96" rx="12" fill="#0B1530" stroke="#F59E0B" stroke-width="2"/>
+      <text x="1090" y="656">tool_use_id toolu_fake_04</text><text x="1090" y="692">placed (open)</text>
+    </g>
+
+    <text x="800" y="830" font-size="24" text-anchor="middle">Ids match one to one · the follow-up call carries 3 messages, not 6</text>
+  </g>
+</svg>

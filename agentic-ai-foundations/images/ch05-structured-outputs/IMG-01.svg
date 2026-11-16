@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">Three validation layers in validate_output</title>
+  <desc id="d">The model's text first has whole-response markdown fences stripped. Layer 1 checks syntax: is it valid JSON. Layer 2 checks shape and types against ExpenseClaim: required fields, the category and currency literals, the gt=0 bound and no extra keys. Layer 3 checks meaning with validators such as not_in_future, which never appear in the schema. Text that passes all three becomes a validated ExpenseClaim. A failure at any layer adds entries, each with a location, type and message, to one list of errors that becomes the feedback for the retry. Passing all three proves the shape, not that the values are right.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="92" font-size="40" font-weight="600">validate_output: syntax, shape, then meaning</text>
+
+    <!-- input -->
+    <rect x="60" y="200" width="230" height="130" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="2"/>
+    <text x="175" y="248" font-size="26" font-weight="600" text-anchor="middle">Model text</text>
+    <text x="175" y="286" font-size="22" text-anchor="middle">strip whole-reply</text>
+    <text x="175" y="314" font-size="22" text-anchor="middle">fences only</text>
+
+    <!-- layers -->
+    <rect x="350" y="180" width="270" height="170" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="2"/>
+    <text x="485" y="228" font-size="26" font-weight="600" text-anchor="middle">Layer 1: syntax</text>
+    <text x="485" y="272" font-size="22" text-anchor="middle">valid JSON?</text>
+    <text x="485" y="306" font-size="22" text-anchor="middle">else json_invalid</text>
+
+    <rect x="680" y="180" width="300" height="170" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="2"/>
+    <text x="830" y="228" font-size="26" font-weight="600" text-anchor="middle">Layer 2: shape</text>
+    <text x="830" y="272" font-size="22" text-anchor="middle">fits ExpenseClaim?</text>
+    <text x="830" y="306" font-size="22" text-anchor="middle">required, literals, gt=0</text>
+
+    <rect x="1040" y="180" width="270" height="170" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="2"/>
+    <text x="1175" y="228" font-size="26" font-weight="600" text-anchor="middle">Layer 3: meaning</text>
+    <text x="1175" y="272" font-size="22" text-anchor="middle">not_in_future</text>
+    <text x="1175" y="306" font-size="22" text-anchor="middle">(not in the schema)</text>
+
+    <rect x="1370" y="200" width="190" height="130" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="1465" y="255" font-size="26" font-weight="600" text-anchor="middle">Validated</text>
+    <text x="1465" y="292" font-size="22" text-anchor="middle">ExpenseClaim</text>
+
+    <g stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)" stroke-linecap="round">
+      <line x1="290" y1="265" x2="342" y2="265"/>
+      <line x1="620" y1="265" x2="672" y2="265"/>
+      <line x1="980" y1="265" x2="1032" y2="265"/>
+      <line x1="1310" y1="265" x2="1362" y2="265"/>
+    </g>
+    <g font-size="22" text-anchor="middle">
+      <text x="646" y="250">ok</text>
+      <text x="1006" y="250">ok</text>
+      <text x="1336" y="250">ok</text>
+    </g>
+
+    <!-- failures -->
+    <g stroke="#F43F5E" stroke-width="3" fill="none" marker-end="url(#arrow)" stroke-linecap="round" stroke-dasharray="10 8">
+      <path d="M485 350 V470 Q485 500 515 515 L630 557"/>
+      <line x1="830" y1="350" x2="830" y2="557"/>
+      <path d="M1175 350 V470 Q1175 500 1145 515 L1030 557"/>
+    </g>
+    <g font-size="22" fill="#F43F5E">
+      <text x="500" y="430">fails</text>
+      <text x="845" y="430">fails</text>
+      <text x="1190" y="430">fails</text>
+    </g>
+
+    <rect x="560" y="565" width="540" height="150" rx="14" fill="#1E293B" stroke="#F43F5E" stroke-width="2"/>
+    <text x="830" y="612" font-size="26" font-weight="600" text-anchor="middle">One ValidationError, every problem</text>
+    <text x="830" y="652" font-size="22" text-anchor="middle">each entry: loc, type, msg</text>
+    <text x="830" y="688" font-size="22" text-anchor="middle">becomes the feedback for the retry</text>
+
+    <rect x="80" y="770" width="1440" height="70" rx="35" fill="none" stroke="#F59E0B" stroke-width="2"/>
+    <text x="800" y="814" font-size="24" text-anchor="middle">Passing all three proves the shape, not that the values are right: Priya still reviews flagged claims.</text>
+  </g>
+</svg>

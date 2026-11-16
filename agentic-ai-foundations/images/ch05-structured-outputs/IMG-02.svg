@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">The validate-and-retry loop in extract</title>
+  <desc id="d">extract calls client.complete and reads the stop reason first. Truncated raises ExtractionFailed with reason truncated and is not retried. Other or tool_call, which is where a provider refusal arrives, raises ExtractionFailed with reason stopped and is never validated. Finished goes to validate_output. A valid result returns an Extraction with the value and every attempt. If validation fails and attempts remain, the previous reply and the error feedback are added to the messages and the model is called again. When max_attempts is reached, ExtractionFailed with reason invalid is raised, carrying every attempt.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="92" font-size="40" font-weight="600">extract: stop reason first, then a bounded retry</text>
+
+    <!-- call -->
+    <rect x="80" y="330" width="290" height="120" rx="60" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="225" y="383" font-size="26" font-weight="600" text-anchor="middle">client.complete()</text>
+    <text x="225" y="418" font-size="22" text-anchor="middle">attempt n of max</text>
+
+    <!-- stop reason decision -->
+    <polygon points="580,300 720,390 580,480 440,390" fill="#1E293B" stroke="#F59E0B" stroke-width="2"/>
+    <text x="580" y="384" font-size="24" font-weight="600" text-anchor="middle">stop</text>
+    <text x="580" y="414" font-size="24" font-weight="600" text-anchor="middle">reason?</text>
+
+    <!-- failure exits -->
+    <rect x="410" y="140" width="340" height="100" rx="14" fill="#1E293B" stroke="#F43F5E" stroke-width="2"/>
+    <text x="580" y="182" font-size="24" font-weight="600" text-anchor="middle">truncated: fail fast</text>
+    <text x="580" y="216" font-size="22" text-anchor="middle">raise, no retry</text>
+    <rect x="410" y="560" width="340" height="110" rx="14" fill="#1E293B" stroke="#F43F5E" stroke-width="2"/>
+    <text x="580" y="603" font-size="24" font-weight="600" text-anchor="middle">other / tool_call: stop</text>
+    <text x="580" y="638" font-size="22" text-anchor="middle">a refusal lands here</text>
+
+    <!-- validate -->
+    <rect x="830" y="330" width="290" height="120" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="2"/>
+    <text x="975" y="383" font-size="26" font-weight="600" text-anchor="middle">validate_output</text>
+    <text x="975" y="418" font-size="22" text-anchor="middle">syntax, shape, meaning</text>
+
+    <!-- success -->
+    <rect x="1220" y="160" width="310" height="120" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="1375" y="210" font-size="26" font-weight="600" text-anchor="middle">return Extraction</text>
+    <text x="1375" y="247" font-size="22" text-anchor="middle">value + every attempt</text>
+
+    <!-- attempts left -->
+    <polygon points="1375,360 1505,445 1375,530 1245,445" fill="#1E293B" stroke="#F59E0B" stroke-width="2"/>
+    <text x="1375" y="439" font-size="24" font-weight="600" text-anchor="middle">attempts</text>
+    <text x="1375" y="469" font-size="24" font-weight="600" text-anchor="middle">left?</text>
+
+    <rect x="1220" y="620" width="310" height="110" rx="14" fill="#1E293B" stroke="#F43F5E" stroke-width="2"/>
+    <text x="1375" y="664" font-size="24" font-weight="600" text-anchor="middle">raise "invalid"</text>
+    <text x="1375" y="700" font-size="22" text-anchor="middle">with every attempt</text>
+
+    <!-- feedback -->
+    <rect x="610" y="740" width="420" height="100" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="2"/>
+    <text x="820" y="782" font-size="24" font-weight="600" text-anchor="middle">add reply + feedback</text>
+    <text x="820" y="816" font-size="22" text-anchor="middle">"- currency: Field required"</text>
+
+    <g stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)" stroke-linecap="round">
+      <line x1="370" y1="390" x2="432" y2="390"/>
+      <line x1="720" y1="390" x2="822" y2="390"/>
+      <path d="M1120 375 Q1180 330 1180 280 Q1180 225 1212 222"/>
+      <path d="M1120 410 Q1180 430 1237 440"/>
+      <line x1="1375" y1="530" x2="1375" y2="612"/>
+      <path d="M1310 488 C1190 560 1130 640 1130 720 Q1130 790 1038 790"/>
+      <path d="M610 790 H225 V458"/>
+    </g>
+    <g stroke="#F43F5E" stroke-width="3" fill="none" marker-end="url(#arrow)" stroke-linecap="round">
+      <line x1="580" y1="300" x2="580" y2="248"/>
+      <line x1="580" y1="480" x2="580" y2="552"/>
+    </g>
+    <g font-size="22">
+      <text x="745" y="375">finished</text>
+      <text x="1190" y="300">valid</text>
+      <text x="1135" y="460">errors</text>
+      <text x="1390" y="585">no</text>
+      <text x="1150" y="610" text-anchor="end">yes</text>
+    </g>
+  </g>
+</svg>

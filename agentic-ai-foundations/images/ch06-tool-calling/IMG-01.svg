@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">One tool-calling round trip</title>
+  <desc id="d">Sequence diagram with three lanes: the program, the model and the Kestrel API. Model call 1: the program sends messages plus tool definitions. The model replies with stop reason tool_call and a tool call with id toolu_01, name get_order and input order O-0000141. The program, not the model, validates the arguments and calls GET /orders/O-0000141 on the Kestrel API, which returns the order. Model call 2: the program sends the history plus a tool result carrying the same id toolu_01. The model replies with stop reason finished and the answer for Daniel.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="88" font-size="40" font-weight="600">One round trip: the model asks, the program runs</text>
+
+    <!-- lane heads -->
+    <rect x="130" y="130" width="300" height="72" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="280" y="176" font-size="28" font-weight="600" text-anchor="middle">Program</text>
+    <rect x="650" y="130" width="300" height="72" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="800" y="176" font-size="28" font-weight="600" text-anchor="middle">Model</text>
+    <rect x="1170" y="130" width="300" height="72" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="1320" y="176" font-size="28" font-weight="600" text-anchor="middle">Kestrel API</text>
+
+    <!-- lifelines -->
+    <g stroke="#334155" stroke-width="2" stroke-dasharray="8 8">
+      <line x1="280" y1="202" x2="280" y2="850"/>
+      <line x1="800" y1="202" x2="800" y2="850"/>
+      <line x1="1320" y1="202" x2="1320" y2="850"/>
+    </g>
+
+    <g stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)">
+      <line x1="285" y1="275" x2="790" y2="275"/>
+      <line x1="795" y1="375" x2="290" y2="375"/>
+      <line x1="285" y1="500" x2="1310" y2="500"/>
+      <line x1="1315" y1="565" x2="290" y2="565"/>
+      <line x1="285" y1="680" x2="790" y2="680"/>
+      <line x1="795" y1="790" x2="290" y2="790"/>
+    </g>
+
+    <text x="540" y="258" font-size="24" text-anchor="middle">1. messages + tool definitions</text>
+    <text x="540" y="332" font-size="24" text-anchor="middle">2. stop reason: tool_call</text>
+    <text x="540" y="360" font-size="22" text-anchor="middle" fill="#F59E0B">id toolu_01 · get_order(O-0000141)</text>
+    <rect x="480" y="432" width="640" height="38" fill="#0B1530"/>
+    <rect x="630" y="522" width="340" height="38" fill="#0B1530"/>
+    <text x="800" y="460" font-size="24" text-anchor="middle">3. program validates and runs: GET /orders/O-0000141</text>
+    <text x="800" y="550" font-size="24" text-anchor="middle">4. the order: status shipped</text>
+    <text x="540" y="636" font-size="24" text-anchor="middle">5. history + tool result</text>
+    <text x="540" y="664" font-size="22" text-anchor="middle" fill="#F59E0B">tool_use_id toolu_01 (same id)</text>
+    <text x="540" y="774" font-size="24" text-anchor="middle">6. stop reason: finished · answer</text>
+
+    <!-- notes -->
+    <rect x="1000" y="640" width="520" height="150" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="1030" y="690" font-size="22">The model never reaches the API.</text>
+    <text x="1030" y="728" font-size="22">Model call 1: steps 1–2</text>
+    <text x="1030" y="766" font-size="22">Model call 2: steps 5–6</text>
+  </g>
+</svg>

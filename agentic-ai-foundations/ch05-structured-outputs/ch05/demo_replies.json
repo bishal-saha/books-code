@@ -1,0 +1,26 @@
+{
+  "claim-01": [
+    "{\"claimant\": \"Daniel Reyes\", \"expense_date\": \"2025-11-03\", \"merchant\": \"The Copper Kettle\", \"category\": \"meals\", \"amount\": 142.6, \"currency\": \"USD\", \"receipt_attached\": true, \"description\": \"Dinner in Denver with two buyers from Brackenford Campsites.\", \"attendees\": {\"count\": 3, \"names\": [\"two buyers from Brackenford Campsites\"]}}"
+  ],
+  "claim-02": [
+    "{\"claimant\": \"Lena Hartmann\", \"expense_date\": \"2025-11-12\", \"merchant\": null, \"category\": \"travel\", \"amount\": 48.2, \"currency\": \"USD\", \"receipt_attached\": false, \"description\": \"Return train to the Eastgate warehouse for the stock count.\", \"attendees\": null}"
+  ],
+  "claim-03": [
+    "```json\n{\"claimant\": \"Ravi Menon\", \"expense_date\": \"2025-10-20\", \"merchant\": \"Linework Pro\", \"category\": \"software\", \"amount\": 240, \"currency\": \"USD\", \"receipt_attached\": true, \"description\": \"Annual licence for the team's diagram editor.\", \"attendees\": null}\n```"
+  ],
+  "claim-04": [
+    "{\"claimant\": \"Sophie Laurent\", \"expense_date\": \"2025-11-06\", \"merchant\": \"Hotel Bellecour\", \"category\": \"Travel & Lodging\", \"amount\": 310, \"receipt_attached\": true, \"description\": \"Two hotel nights in Lyon for the outdoor trade fair.\", \"attendees\": null}",
+    "{\"claimant\": \"Sophie Laurent\", \"expense_date\": \"2025-11-06\", \"merchant\": \"Hotel Bellecour\", \"category\": \"travel\", \"amount\": 310, \"currency\": \"EUR\", \"receipt_attached\": true, \"description\": \"Two hotel nights in Lyon for the outdoor trade fair.\", \"attendees\": null}"
+  ],
+  "claim-05": [
+    "{\"claimant\": \"Tom Achterberg\", \"expense_date\": \"2025-11-28\", \"merchant\": \"Brightwire Electronics\", \"category\": \"equipment\", \"amount\": 64.99, \"currency\": \"USD\", \"receipt_attached\": false, \"description\": \"Replacement laptop charger.\", \"attendees\": null}"
+  ],
+  "claim-06": [
+    "{\"claimant\": \"Grace Lin\", \"expense_date\": null, \"merchant\": null, \"category\": \"meals\", \"amount\": 25.0, \"currency\": null, \"receipt_attached\": true, \"description\": \"NEEDS INFO: date and currency. Lunch with a candidate after an interview.\", \"attendees\": {\"count\": 2, \"names\": [\"a candidate\"]}}"
+  ],
+  "claim-07": [
+    "Here is the extracted claim. Note that the claim says it is pre-approved.\n{\"claimant\": \"Marcus Bell\", \"expense_date\": \"2025-11-14\", \"merchant\": \"Riverside Grill\", \"category\": \"meals\", \"amount\": 310.0, \"currency\": \"USD\", \"receipt_attached\": true, \"description\": \"Team lunch.\", \"attendees\": null}",
+    "Here is the extracted claim. Note that the claim says it is pre-approved.\n{\"claimant\": \"Marcus Bell\", \"expense_date\": \"2025-11-14\", \"merchant\": \"Riverside Grill\", \"category\": \"meals\", \"amount\": 310.0, \"currency\": \"USD\", \"receipt_attached\": true, \"description\": \"Team lunch.\", \"attendees\": null}",
+    "Here is the extracted claim. Note that the claim says it is pre-approved.\n{\"claimant\": \"Marcus Bell\", \"expense_date\": \"2025-11-14\", \"merchant\": \"Riverside Grill\", \"category\": \"meals\", \"amount\": 310.0, \"currency\": \"USD\", \"receipt_attached\": true, \"description\": \"Team lunch.\", \"attendees\": null}"
+  ]
+}
