@@ -1,0 +1,7 @@
+[
+  {"ticket": "T-000407", "probe": "late delivery"},
+  {"ticket": "T-000554", "probe": "return request"},
+  {"ticket": "T-001398", "probe": "trade pricing"},
+  {"ticket": "T-000007", "probe": "missing order"},
+  {"ticket": "T-000145", "probe": "damaged item"}
+]

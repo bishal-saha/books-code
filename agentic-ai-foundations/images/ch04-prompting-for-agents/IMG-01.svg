@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">A structured system prompt and a delimited user message</title>
+  <desc id="d">On the left, the system prompt, identical for every ticket, has six sections in order: role, task, data, constraints, output format and the don't-know rule, followed by optional few-shot examples. On the right, the user message changes for every ticket: a ticket block holding the customer's escaped text, and a data block with the order, shipment and current policies. Both go to ModelClient.complete, which returns a draft with a subject, a reply and a notes line for the reviewer.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="92" font-size="40" font-weight="600">Same instructions, different data</text>
+
+    <!-- System prompt panel -->
+    <rect x="80" y="140" width="560" height="700" rx="14" fill="none" stroke="#6366F1" stroke-width="3"/>
+    <text x="110" y="190" font-size="28" font-weight="600">System prompt</text>
+    <text x="110" y="224" font-size="22">same for every ticket</text>
+    <g font-size="26" text-anchor="middle">
+      <rect x="120" y="250" width="480" height="60" rx="30" fill="#1E293B" stroke="#6366F1" stroke-width="2"/>
+      <text x="360" y="289">Role</text>
+      <rect x="120" y="322" width="480" height="60" rx="30" fill="#1E293B" stroke="#6366F1" stroke-width="2"/>
+      <text x="360" y="361">Task</text>
+      <rect x="120" y="394" width="480" height="60" rx="30" fill="#1E293B" stroke="#14B8A6" stroke-width="2"/>
+      <text x="360" y="433">Data: what the tags mean</text>
+      <rect x="120" y="466" width="480" height="60" rx="30" fill="#1E293B" stroke="#6366F1" stroke-width="2"/>
+      <text x="360" y="505">Constraints</text>
+      <rect x="120" y="538" width="480" height="60" rx="30" fill="#1E293B" stroke="#6366F1" stroke-width="2"/>
+      <text x="360" y="577">Output format</text>
+      <rect x="120" y="610" width="480" height="60" rx="30" fill="#1E293B" stroke="#F59E0B" stroke-width="2"/>
+      <text x="360" y="649">Don't-know rule: NEEDS INFO</text>
+      <rect x="120" y="700" width="480" height="60" rx="30" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="10 8"/>
+      <text x="360" y="739">Examples (optional)</text>
+    </g>
+    <text x="110" y="808" font-size="22">one versioned file: support_reply_v2.md</text>
+
+    <!-- User message panel -->
+    <rect x="720" y="140" width="420" height="440" rx="14" fill="none" stroke="#14B8A6" stroke-width="3"/>
+    <text x="750" y="190" font-size="28" font-weight="600">User message</text>
+    <text x="750" y="224" font-size="22">one per ticket</text>
+    <rect x="750" y="250" width="360" height="140" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="770" y="292" font-size="26" font-family="'JetBrains Mono', ui-monospace, monospace">&lt;ticket&gt;</text>
+    <text x="790" y="332" font-size="22">customer text, escaped</text>
+    <text x="770" y="372" font-size="26" font-family="'JetBrains Mono', ui-monospace, monospace">&lt;/ticket&gt;</text>
+    <rect x="750" y="410" width="360" height="140" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="770" y="452" font-size="26" font-family="'JetBrains Mono', ui-monospace, monospace">&lt;data&gt;</text>
+    <text x="790" y="492" font-size="22">order, shipment, policies</text>
+    <text x="770" y="532" font-size="26" font-family="'JetBrains Mono', ui-monospace, monospace">&lt;/data&gt;</text>
+
+    <!-- Model client -->
+    <rect x="1200" y="300" width="320" height="100" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="1360" y="345" font-size="26" font-weight="600" text-anchor="middle">ModelClient</text>
+    <text x="1360" y="380" font-size="22" text-anchor="middle">.complete()</text>
+
+    <!-- Draft -->
+    <rect x="1200" y="560" width="320" height="200" rx="14" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+    <text x="1225" y="605" font-size="26" font-weight="600">Draft</text>
+    <text x="1225" y="645" font-size="22">Subject: …</text>
+    <text x="1225" y="682" font-size="22">Reply: …</text>
+    <text x="1225" y="719" font-size="22">Notes for reviewer: …</text>
+
+    <g stroke="#CBD5E1" stroke-width="3" fill="none" stroke-linejoin="round" marker-end="url(#arrow)">
+      <path d="M640 230 H680 V110 H1360 V292"/>
+      <path d="M1140 360 H1190"/>
+      <path d="M1360 400 V550"/>
+    </g>
+    <text x="680" y="660" font-size="22">Only the user message changes,</text>
+    <text x="680" y="692" font-size="22">so two drafts differ by data or</text>
+    <text x="680" y="724" font-size="22">sampling, never by instructions.</text>
+  </g>
+</svg>
