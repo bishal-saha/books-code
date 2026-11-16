@@ -24,6 +24,12 @@ class OrderStatus(StrEnum):
     RETURNED = "returned"
 
 
+class ShipmentStatus(StrEnum):
+    IN_TRANSIT = "in_transit"
+    DELIVERED = "delivered"
+    LOST = "lost"
+
+
 class TicketStatus(StrEnum):
     OPEN = "open"
     PENDING = "pending"
@@ -93,6 +99,24 @@ class Order:
     @property
     def total_cents(self) -> int:
         return sum(line.quantity * line.unit_price_cents for line in self.lines)
+
+
+@dataclass(frozen=True)
+class Shipment:
+    id: str
+    order_id: str
+    warehouse: str
+    carrier: str
+    shipped_at: datetime
+    promised_by: datetime
+    delivered_at: datetime | None
+    status: ShipmentStatus
+
+    @property
+    def late(self) -> bool:
+        if self.delivered_at is None:
+            return self.status is ShipmentStatus.LOST
+        return self.delivered_at > self.promised_by
 
 
 @dataclass(frozen=True)

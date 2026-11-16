@@ -4,7 +4,7 @@ Kestrel Outfitters is a fictional company; any resemblance to real businesses or
 products is coincidental. All data is synthetic.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 DISCLAIMER = (
     "Kestrel Outfitters is a fictional company; any resemblance to real businesses "

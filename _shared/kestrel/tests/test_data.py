@@ -1,8 +1,9 @@
 import sqlite3
 
 from kestrel import DISCLAIMER
-from kestrel.cli import write_sqlite
+from kestrel.cli_support import write_sqlite
 from kestrel.data import generate
+from kestrel.workspace import up
 
 
 def test_same_seed_same_rows() -> None:
@@ -44,3 +45,19 @@ def test_write_sqlite(tmp_path) -> None:
     counts = write_sqlite(generate(scale=0.01), path)
     with sqlite3.connect(path) as db:
         assert db.execute("SELECT count(*) FROM orders").fetchone()[0] == counts["orders"]
+
+
+def test_shipments_reference_orders_and_some_are_late() -> None:
+    d = generate(scale=0.05)
+    order_ids = {o.id for o in d.orders}
+    assert d.shipments and all(s.order_id in order_ids for s in d.shipments)
+    assert any(s.late for s in d.shipments)
+    assert not any(s.late for s in d.shipments if s.status.value == "in_transit")
+
+
+def test_up_writes_workspace(tmp_path) -> None:
+    result = up(tmp_path / "ws", scale=0.01)
+    assert (tmp_path / "ws" / "kestrel.sqlite").exists()
+    assert (tmp_path / "ws" / "exports" / "shipments.csv").exists()
+    assert "shipping-policy.md" in result["docs"]
+    assert "shipping-policy-v2-OUTDATED.md" in result["docs"]

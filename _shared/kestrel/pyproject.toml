@@ -1,6 +1,6 @@
 [project]
 name = "kestrel-outfitters"
-version = "0.1.0"
+version = "0.2.0"
 description = "Kestrel Outfitters: the fictional company and synthetic data behind the Agentic AI book series capstones (iambishal.com)"
 readme = "README.md"
 license = "MIT"

@@ -20,7 +20,7 @@ Kestrel is big enough to have every problem an agent book needs (support volume,
 
 ## Departments and their systems
 
-All systems are mocks that run locally (`uv run kestrel up`); none needs an outside account.
+All systems are local mocks; none needs an outside account. `uv run kestrel up` prepares the data and documents; the services arrive with the books that use them.
 
 | Department | Lead (recurring character) | System (mock) | What's in it |
 |---|---|---|---|
@@ -79,4 +79,6 @@ Written in the series' order (Book 1, 3, 2, 4, 5, 7, 6, 8, 9, 10).
 
 ## Package status
 
-This package grows with the books. Phase 0 provides the data model and a seeded generator; the mock services are added when the first capstone that needs them is written.
+This package grows with the books. Version 0.2.0 provides the data model, the seeded generator, synthetic policy documents and `kestrel up` (database, CSV exports and documents in one folder); the mock services are added when the first capstone that needs them is written.
+
+Carriers in the data (fictional): Northline Freight, Swiftway Parcel, Harbour Express, Tallpine Logistics. Warehouses: Main (Riverside) and North (Eastgate).

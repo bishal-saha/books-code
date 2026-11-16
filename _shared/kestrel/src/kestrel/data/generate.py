@@ -21,6 +21,8 @@ from kestrel.data.model import (
     OrderLine,
     OrderStatus,
     Product,
+    Shipment,
+    ShipmentStatus,
     Ticket,
     TicketMessage,
     TicketPriority,
@@ -36,6 +38,7 @@ FULL_SIZE = {
     "employees": 400,
     "products": 400,
     "orders": 20_000,
+    "shipments": 18_000,
     "tickets": 3_000,
     "claims": 2_500,
 }
@@ -175,12 +178,23 @@ CLAIM_CATEGORIES = [
 ]
 
 
+# Fictional carriers with different reliability, so "who is late most?" has an answer.
+CARRIERS = [
+    ("Northline Freight", 0.04),
+    ("Swiftway Parcel", 0.09),
+    ("Harbour Express", 0.15),
+    ("Tallpine Logistics", 0.06),
+]
+WAREHOUSES = ["Main (Riverside)", "North (Eastgate)"]
+
+
 @dataclass(frozen=True)
 class Dataset:
     customers: tuple[Customer, ...]
     employees: tuple[Employee, ...]
     products: tuple[Product, ...]
     orders: tuple[Order, ...]
+    shipments: tuple[Shipment, ...]
     tickets: tuple[Ticket, ...]
     claims: tuple[ExpenseClaim, ...]
 
@@ -285,6 +299,44 @@ def _orders(
     return out
 
 
+def _shipments(rng: random.Random, n: int, orders: list[Order]) -> list[Shipment]:
+    shippable = [
+        o
+        for o in orders
+        if o.status is not OrderStatus.CANCELLED and o.status is not OrderStatus.PLACED
+    ]
+    out = []
+    for i, order in enumerate(shippable[:n], start=1):
+        carrier, late_rate = rng.choice(CARRIERS)
+        shipped = order.placed_at + timedelta(hours=rng.randint(4, 48))
+        promised = shipped + timedelta(days=rng.choice([2, 3, 5]))
+        if order.status is OrderStatus.SHIPPED:
+            delivered, status = None, ShipmentStatus.IN_TRANSIT
+        elif rng.random() < 0.003:
+            delivered, status = None, ShipmentStatus.LOST
+        else:
+            late = rng.random() < late_rate
+            delay = (
+                timedelta(hours=rng.randint(6, 96))
+                if late
+                else -timedelta(hours=rng.randint(0, 30))
+            )
+            delivered, status = promised + delay, ShipmentStatus.DELIVERED
+        out.append(
+            Shipment(
+                f"S-{i:07d}",
+                order.id,
+                rng.choice(WAREHOUSES),
+                carrier,
+                shipped,
+                promised,
+                delivered,
+                status,
+            )
+        )
+    return out
+
+
 def _tickets(
     rng: random.Random,
     n: int,
@@ -354,6 +406,7 @@ def generate(seed: int = 2026, scale: float = 1.0) -> Dataset:
     employees = _employees(rng, _count("employees", scale))
     products = _products(rng, _count("products", scale))
     orders = _orders(rng, _count("orders", scale), customers, products)
+    shipments = _shipments(rng, _count("shipments", scale), orders)
     tickets = _tickets(rng, _count("tickets", scale), customers, orders, employees)
     claims = _claims(rng, _count("claims", scale), employees)
     return Dataset(
@@ -361,6 +414,7 @@ def generate(seed: int = 2026, scale: float = 1.0) -> Dataset:
         tuple(employees),
         tuple(products),
         tuple(orders),
+        tuple(shipments),
         tuple(tickets),
         tuple(claims),
     )
