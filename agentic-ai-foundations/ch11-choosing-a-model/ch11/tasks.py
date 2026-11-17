@@ -23,10 +23,9 @@ class OrderStatus(BaseModel):
     status: str
 
 
-class OrderCarrier(BaseModel):
-    order_id: str
-    status: str
-    carrier: str | None  # null when the order has not shipped
+class LateCount(BaseModel):
+    carrier: str
+    late_shipments: int
 
 
 class MostStock(BaseModel):
@@ -69,11 +68,11 @@ def expect_order_status(api: httpx.Client) -> dict[str, Any]:
     return {"order_id": "O-0000042", "status": _get(api, "/orders/O-0000042")["status"]}
 
 
-def expect_order_carrier(api: httpx.Client) -> dict[str, Any]:
-    order = _get(api, "/orders/O-0000108")
-    shipment = api.get("/orders/O-0000108/shipment")
-    carrier = shipment.json()["carrier"] if shipment.status_code == 200 else None
-    return {"order_id": "O-0000108", "status": order["status"], "carrier": carrier}
+def expect_late_count(api: httpx.Client) -> dict[str, Any]:
+    params = {"carrier": "Tallpine Logistics", "late": "true", "limit": 500}
+    rows = _get(api, f"/shipments?{httpx.QueryParams(params)}")
+    assert len(rows) < 500, "the count reached the mock's 500-row cap; pick another carrier"
+    return {"carrier": "Tallpine Logistics", "late_shipments": len(rows)}
 
 
 def expect_most_stock(api: httpx.Client) -> dict[str, Any]:
@@ -125,17 +124,17 @@ TASKS = [
     Task(
         "order-status",
         "What is the status of order O-0000042? Answer as JSON with order_id and status.",
-        frozenset({"get_order"}),
+        frozenset({"get_delivery_status"}),
         OrderStatus,
         expect_order_status,
     ),
     Task(
-        "order-carrier",
-        "Has order O-0000108 shipped, and with which carrier? Answer as JSON with order_id, "
-        "status and carrier (null if it has not shipped).",
-        frozenset({"get_order", "get_shipment"}),
-        OrderCarrier,
-        expect_order_carrier,
+        "late-count",
+        "How many late Tallpine Logistics shipments are there? Answer as JSON with carrier "
+        "and late_shipments.",
+        frozenset({"list_shipments"}),
+        LateCount,
+        expect_late_count,
     ),
     Task(
         "most-stock",
@@ -165,7 +164,7 @@ TASKS = [
         "Look up the shipment for order O-0000107. Is its carrier one the current shipping "
         "policy lists, and was it late? Answer as JSON with order_id, carrier, late and "
         "carrier_in_current_policy.",
-        frozenset({"get_shipment", "get_policy"}),
+        frozenset({"get_delivery_status", "get_policy"}),
         ShipmentPolicy,
         expect_shipment_policy,
     ),

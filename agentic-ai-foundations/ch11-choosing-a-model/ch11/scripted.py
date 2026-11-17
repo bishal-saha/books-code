@@ -3,7 +3,7 @@
 The model's side (tool calls, answers and token counts) is written by hand and labelled fake;
 the prices are illustrative, not any seller's. Tool results are real: the registry calls the
 seeded Kestrel API. `fake-correct` makes the right calls and answers correctly.
-`fake-wrong-tool` calls a tool that cannot answer, then gives the right answer anyway.
+`fake-wrong-tool` calls a tool that doesn't exist, then gives the right answer anyway.
 """
 
 import json
@@ -39,20 +39,19 @@ FAKE_CONFIGS = [
 ]
 
 RIGHT_CALLS: dict[str, list[tuple[str, dict]]] = {  # one step; several calls run in parallel
-    "order-status": [("get_order", {"order_id": "O-0000042"})],
-    "order-carrier": [
-        ("get_order", {"order_id": "O-0000108"}),
-        ("get_shipment", {"order_id": "O-0000108"}),
+    "order-status": [("get_delivery_status", {"order_or_ticket_id": "O-0000042"})],
+    "late-count": [
+        ("list_shipments", {"carrier": "Tallpine Logistics", "late": True, "limit": 1}),
     ],
     "most-stock": [("get_stock", {"sku": "SKU-00042"}), ("get_stock", {"sku": "SKU-00043"})],
     "ticket-triage": [("get_ticket", {"ticket_id": "T-000042"})],
     "outdated-policy": [("get_policy", {"name": "shipping-policy"})],
     "shipment-plus-policy": [
-        ("get_shipment", {"order_id": "O-0000107"}),
+        ("get_delivery_status", {"order_or_ticket_id": "O-0000107"}),
         ("get_policy", {"name": "shipping-policy"}),
     ],
 }
-WRONG_CALLS = [("list_policies", {})]  # answers nothing any task asks
+WRONG_CALLS = [("search_orders", {"query": "late"})]  # no such tool: an error result
 
 
 def scripted_run(calls: list[tuple[str, dict]], answer: str) -> FakeModelClient:

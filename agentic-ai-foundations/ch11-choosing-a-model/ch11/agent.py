@@ -24,7 +24,7 @@ from ch11.model_client import (
     assistant_message,
     tool_results_message,
 )
-from ch11.tools import ToolRegistry
+from ch11.registry import ToolRegistry
 
 logger = logging.getLogger(__name__)
 MIN_CALL_TOKENS = 256  # below this, a reply would be cut off almost at once

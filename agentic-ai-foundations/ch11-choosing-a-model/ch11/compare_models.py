@@ -20,12 +20,12 @@ from pydantic import BaseModel
 from ch11.agent import run_agent
 from ch11.budget import CallLimits, RunBudget, StopCause
 from ch11.configs import ConfigError, ModelConfig, load_configs, make_client
-from ch11.kestrel_tools import build_compare_registry
 from ch11.model_client import Message, ModelClient, ModelError
 from ch11.pricing import run_cost
 from ch11.prompts import load_prompt
 from ch11.settings import Settings
 from ch11.tasks import TASKS, Task, failure_label
+from ch11.tools import build_registry
 
 ClientFor = Callable[[Task], ModelClient]  # one configuration's client, per task
 Factory = Callable[[ModelConfig], ClientFor]  # raises ConfigError for a configuration it skips
@@ -76,7 +76,7 @@ def compare(
     system = load_prompt("compare", 1).body  # held constant across configurations
     budget = RunBudget(settings.run_max_steps, settings.run_max_tokens, settings.run_max_seconds)
     limits = CallLimits(settings.max_output_tokens, settings.timeout_seconds)
-    registry = build_compare_registry(api, settings.tool_result_max_chars)
+    registry = build_registry(api, settings.tool_result_max_chars)
     rows: list[Row] = []
     skipped: dict[str, str] = {}
     for config in configs:

@@ -4,9 +4,9 @@ import httpx
 import pytest
 from ch11.agent import RunResult, StepRecord, ToolCallRecord
 from ch11.budget import StopCause
-from ch11.kestrel_tools import build_compare_registry
 from ch11.model_client import ToolCall
 from ch11.tasks import TASKS, failure_label
+from ch11.tools import build_registry
 
 TASK = {t.task_id: t for t in TASKS}
 
@@ -40,7 +40,7 @@ def test_every_task_has_an_answerable_expectation(api) -> None:
 def test_success(api) -> None:
     task = TASK["order-status"]
     answer = '{"order_id": "O-0000042", "status": "delivered"}'
-    assert failure_label(task, finished(answer, "get_order"), api) is None
+    assert failure_label(task, finished(answer, "get_delivery_status"), api) is None
 
 
 def test_right_answer_without_the_lookup_fails(api) -> None:
@@ -51,7 +51,7 @@ def test_right_answer_without_the_lookup_fails(api) -> None:
 
 def test_fenced_json_is_invalid_structured_output(api) -> None:
     fenced = '```json\n{"order_id": "O-0000042", "status": "delivered"}\n```'
-    label = failure_label(TASK["order-status"], finished(fenced, "get_order"), api)
+    label = failure_label(TASK["order-status"], finished(fenced, "get_delivery_status"), api)
     assert label == "invalid structured output"
 
 
@@ -63,18 +63,22 @@ def test_outdated_policy_answer_is_wrong(api) -> None:
 
 
 def test_budget_stop_is_reported_by_its_stop_cause(api) -> None:
-    result = finished("", "get_order", cause=StopCause.STEP_LIMIT)
+    result = finished("", "get_delivery_status", cause=StopCause.STEP_LIMIT)
     assert failure_label(TASK["order-status"], result, api) == "step_limit"
 
 
 def test_read_only_tools_answer_from_the_api(api) -> None:
-    registry = build_compare_registry(api)
+    registry = build_registry(api)
     names = [d.name for d in registry.definitions()]
-    assert names == ["get_order", "get_shipment", "list_shipments", "get_stock", "get_ticket",
-                     "list_policies", "get_policy"]  # fmt: skip
+    assert names == ["get_delivery_status", "list_shipments", "get_ticket", "get_policy",
+                     "get_stock"]  # fmt: skip
     stock = registry.dispatch(ToolCall(id="1", name="get_stock", arguments={"sku": "SKU-00042"}))
     assert not stock.is_error and "Main (Riverside)" in stock.content
     missing = registry.dispatch(ToolCall(id="2", name="get_policy", arguments={"name": "nope"}))
-    assert missing.is_error and "shipping-policy" in missing.content
-    listed = registry.dispatch(ToolCall(id="3", name="list_policies", arguments={}))
-    assert "shipping-policy-v2-OUTDATED" in listed.content
+    assert missing.is_error and "shipping-policy-v2-OUTDATED" in missing.content
+
+
+def test_registry_rejects_an_invented_parameter(api) -> None:
+    call = ToolCall(id="3", name="get_stock", arguments={"sku": "SKU-00042", "warehouse": "x"})
+    result = build_registry(api).dispatch(call)
+    assert result.is_error and "warehouse: Extra inputs are not permitted" in result.content

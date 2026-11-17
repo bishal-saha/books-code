@@ -10,10 +10,17 @@ from ch11.agent import run_agent
 from ch11.budget import CallLimits, RunBudget, StopCause
 from ch11.model_client import Message, ModelError, ToolCall, ToolDefinition, ToolResult
 from ch11.openai_compatible_adapter import NOT_JSON, OpenAICompatibleAdapter
+from ch11.registry import Tool, ToolRegistry
 from ch11.settings import Settings
-from ch11.tools import OrderIdArgs, Tool, ToolRegistry
+from pydantic import BaseModel
 
 FIXTURES = Path(__file__).parent / "fixtures"
+
+
+class OrderIdArgs(BaseModel):  # a plain model: the registry, not the model, forbids extras
+    order_id: str
+
+
 GET_ORDER = ToolDefinition(
     name="get_order", description="Get one order.", input_schema=OrderIdArgs.model_json_schema()
 )
@@ -85,14 +92,14 @@ def test_malformed_arguments_reach_the_registry_as_an_error() -> None:
     call = response.tool_calls[0]  # kept, not dropped
     assert NOT_JSON in call.arguments
     result = registry().dispatch(call)
-    assert result.is_error and result.content.startswith("Invalid arguments")
+    assert result.is_error and result.content.startswith("Invalid arguments for get_order")
 
 
 def test_invented_parameter_is_a_validation_error() -> None:
     call = ask(Server(fixture("invented_parameter.json"))).tool_calls[0]
     result = registry().dispatch(call)
     assert result.is_error
-    assert "include_history: Extra inputs are not permitted" in result.content
+    assert "include_history: Extra inputs are not permitted; got True" in result.content
 
 
 def test_arguments_sent_as_an_object_are_accepted() -> None:

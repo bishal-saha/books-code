@@ -9,7 +9,7 @@ from ch11.configs import Price
 from ch11.fake_model import FakeModelClient
 from ch11.model_client import ModelResponse, Usage
 from ch11.pricing import run_cost
-from ch11.tools import ToolRegistry
+from ch11.registry import ToolRegistry
 
 PRICE = Price(input_per_mtok=Decimal("1"), output_per_mtok=Decimal("5"),
               as_of=date(2026, 11, 16), source_url="illustrative")  # fmt: skip
