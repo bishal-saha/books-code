@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">How a final message is checked</title>
+  <desc id="d">Flowchart. During the run, each successful tool output adds its URLs or file name to the run's citable set; error results add nothing. The model's final message, JSON, is validated as a FinalAnswer. Its citations are then checked against the citable set. A failure at either check goes back to the model as a validation error for one retry, which counts as a step; what happens if the retry fails too is decided in Chapter 15. When both checks pass, the status decides the outcome: answered gives claims with citations, plus anything missing; needs_info gives the NEEDS INFO marker and the missing list. Citation checking proves a tool returned the location, not that it supports the claim.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="76" font-size="40" font-weight="600">Shape first, then sources, then status</text>
+
+    <rect x="80" y="140" width="1440" height="110" rx="16" fill="#111C3D" stroke="#14B8A6" stroke-width="2" stroke-dasharray="10 8"/>
+    <text x="110" y="185" font-size="23" font-weight="600" fill="#5EEAD4">During the run</text>
+    <text x="110" y="222" font-size="22">each successful tool output adds its URLs or file name to the citable set; error results add nothing</text>
+
+    <rect x="80" y="380" width="250" height="100" rx="16" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="205" y="422" font-size="25" font-weight="600" text-anchor="middle">final message</text>
+    <text x="205" y="456" font-size="21" text-anchor="middle" fill="#94A3B8">JSON</text>
+
+    <rect x="410" y="380" width="290" height="100" rx="16" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="555" y="422" font-size="25" font-weight="600" text-anchor="middle">FinalAnswer</text>
+    <text x="555" y="456" font-size="21" text-anchor="middle" fill="#94A3B8">schema + validators</text>
+
+    <rect x="780" y="380" width="290" height="100" rx="16" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="925" y="422" font-size="25" font-weight="600" text-anchor="middle">check_citations</text>
+    <text x="925" y="456" font-size="21" text-anchor="middle" fill="#94A3B8">against the citable set</text>
+    <line x1="925" y1="250" x2="925" y2="372" stroke="#5EEAD4" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#a)"/>
+
+    <polygon points="1270,370 1390,430 1270,490 1150,430" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="1270" y="438" font-size="24" font-weight="600" text-anchor="middle">status</text>
+
+    <line x1="330" y1="430" x2="402" y2="430" stroke="#CBD5E1" stroke-width="3" marker-end="url(#a)"/>
+    <line x1="700" y1="430" x2="772" y2="430" stroke="#CBD5E1" stroke-width="3" marker-end="url(#a)"/>
+    <line x1="1070" y1="430" x2="1142" y2="430" stroke="#CBD5E1" stroke-width="3" marker-end="url(#a)"/>
+    <text x="736" y="414" font-size="20" text-anchor="middle" fill="#5EEAD4">valid</text>
+    <text x="1106" y="414" font-size="20" text-anchor="middle" fill="#5EEAD4">all found</text>
+
+    <rect x="1200" y="580" width="320" height="100" rx="16" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="1360" y="622" font-size="24" font-weight="600" text-anchor="middle">answered</text>
+    <text x="1360" y="656" font-size="21" text-anchor="middle" fill="#94A3B8">cited claims, plus missing</text>
+    <rect x="1130" y="730" width="390" height="100" rx="16" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="1325" y="772" font-size="24" font-weight="600" text-anchor="middle">needs_info</text>
+    <text x="1325" y="806" font-size="21" text-anchor="middle" fill="#94A3B8">NEEDS INFO: ... and the missing list</text>
+    <path d="M1390 430 H1460 V572" fill="none" stroke="#CBD5E1" stroke-width="3" marker-end="url(#a)"/>
+    <path d="M1270 490 V530 H1160 V722" fill="none" stroke="#CBD5E1" stroke-width="3" marker-end="url(#a)"/>
+
+    <rect x="410" y="620" width="560" height="120" rx="16" fill="#1E293B" stroke="#F43F5E" stroke-width="3"/>
+    <text x="690" y="664" font-size="24" font-weight="600" text-anchor="middle">validation error to the model</text>
+    <text x="690" y="700" font-size="21" text-anchor="middle" fill="#94A3B8">one retry, counted as a step</text>
+    <text x="690" y="726" font-size="21" text-anchor="middle" fill="#94A3B8">if it fails again: Chapter 15 decides</text>
+    <line x1="555" y1="480" x2="555" y2="612" stroke="#F43F5E" stroke-width="3" marker-end="url(#a)"/>
+    <line x1="925" y1="480" x2="850" y2="612" stroke="#F43F5E" stroke-width="3" marker-end="url(#a)"/>
+    <text x="545" y="556" font-size="20" text-anchor="end" fill="#FDA4AF">invalid</text>
+    <text x="905" y="556" font-size="20" fill="#FDA4AF">not returned</text>
+    <path d="M410 680 H205 V488" fill="none" stroke="#F43F5E" stroke-width="3" stroke-dasharray="8 6" marker-end="url(#a)"/>
+
+    <text x="80" y="860" font-size="21" fill="#94A3B8">A passing check proves a tool returned the location in this run, not that it supports the claim.</text>
+  </g>
+</svg>

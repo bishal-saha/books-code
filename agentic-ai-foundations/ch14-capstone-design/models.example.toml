@@ -1,0 +1,14 @@
+# Copy to models.toml and replace every SET-ME (Chapter 11's format; only the price is read here).
+# A price is per million tokens, as strings, with the date you read it and the page you read.
+
+[[config]]
+name = "hosted-sdk"
+provider = "anthropic"
+model_env = "MODEL"
+api_key_env = "ANTHROPIC_API_KEY"
+
+[config.price]
+input_per_mtok = "SET-ME"
+output_per_mtok = "SET-ME"
+as_of = "SET-ME"            # e.g. 2026-11-16
+source_url = "SET-ME"       # the seller's official pricing page

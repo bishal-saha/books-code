@@ -1,0 +1,16 @@
+{
+  "status": "answered",
+  "answer": "Harbour Express had the most late deliveries in Q4 2025 (139), then Swiftway Parcel (93). Reviews mention missed delivery windows for Harbour Express and slow busy-season deliveries for Swiftway Parcel.",
+  "claims": [
+    {"text": "In Q4 2025, Harbour Express had 139 late deliveries and Swiftway Parcel 93, the two highest.", "citations": [0]},
+    {"text": "Reviews of Harbour Express mention missed delivery windows on regional routes.", "citations": [1]},
+    {"text": "Reviews of Swiftway Parcel describe slow regional deliveries in the busy season.", "citations": [2]}
+  ],
+  "citations": [
+    {"kind": "file", "location": "shipments.csv", "supports": "late shipments per carrier, Q4 2025"},
+    {"kind": "url", "location": "https://reviews.example.com/harbour-express", "supports": "reviews of Harbour Express"},
+    {"kind": "url", "location": "https://reviews.example.com/swiftway-parcel", "supports": "reviews of Swiftway Parcel"}
+  ],
+  "confidence": "medium",
+  "missing": []
+}

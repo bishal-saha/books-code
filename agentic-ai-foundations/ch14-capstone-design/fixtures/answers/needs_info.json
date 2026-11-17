@@ -1,0 +1,8 @@
+{
+  "status": "needs_info",
+  "answer": "NEEDS INFO: shipments.csv has no rows shipped in Q2 2026, so it can't say which carriers were late then.",
+  "claims": [],
+  "citations": [],
+  "confidence": "low",
+  "missing": ["shipment rows with shipped_at in Q2 2026 (2026-04-01 to 2026-06-30)"]
+}

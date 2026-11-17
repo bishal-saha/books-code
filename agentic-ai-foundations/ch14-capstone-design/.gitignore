@@ -1,0 +1,8 @@
+# Written by `uv run kestrel up` (database, CSV exports, docs); regenerate it, never commit it.
+.kestrel/
+# Your local settings, with your API key.
+.env
+# Traces from your own runs (Chapter 15 on): they hold real tool arguments and results.
+traces/
+# Your candidates and prices; start from models.example.toml.
+models.toml
