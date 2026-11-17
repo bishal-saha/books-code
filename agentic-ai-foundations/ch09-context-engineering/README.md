@@ -26,7 +26,7 @@ The folder stands alone: files marked "copied" come from Chapter 8's folder (whi
 | `ch09/summarise.py` | New. `summarise_result`, opt-in per tool, with a capped fallback. |
 | `ch09/doc_tools.py` | New. `list_docs` and `read_doc` over `.kestrel/docs/`. |
 | `ch09/grade.py`, `ch09/questions.py` | New. Grace's policy questions and the simple grader. |
-| `ch09/handbook_compare.py` | New. Variant A (whole handbook in the prompt) against variant B (the two doc tools). |
+| `ch09/handbook_compare.py` | New. Variant A (whole handbook in the prompt) against variant B (the two doc tools): tokens, whether the retired page's wording was sent, and `--crossover` on a growing folder. |
 | `ch09/inspect_ops.py` | New. Chapter 8's operations agent (v2 tools, `ops_agent_v2` prompt) with the inspector on. |
 | `ch09/demo_cap.py` | New. `read_doc` with a tiny cap, then the page the marker points to. |
 | `ch09/prompts/handbook_v1.md`, `docs_agent_v1.md`, `summarise_v1.md` | New prompts (the first two in Chapter 4's six sections). |
@@ -62,6 +62,7 @@ and in a second terminal:
 uv run pytest
 uv run python -m ch09.inspect_ops --fake chased
 uv run python -m ch09.handbook_compare --fake
+uv run python -m ch09.handbook_compare --fake --crossover
 uv run python -m ch09.demo_cap
 cp .env.example .env       # then fill in the key, model, prices and CONTEXT_WINDOW
 uv run --env-file .env python -m ch09.inspect_ops O-0014614 O-0004943 O-0004365 O-9999999
@@ -70,7 +71,7 @@ uv run --env-file .env python -m ch09.handbook_compare
 
 ## Expected output
 
-`pytest` reports `90 passed, 1 deselected` (the live test). Fake-model output: the replies (and
+`pytest` reports `92 passed, 1 deselected` (the live test). Fake-model output: the replies (and
 the `in=`/`out=` usage on step lines) are scripted; the context table and the comparison's token
 counts are local estimates (`CHARS_PER_TOKEN`) of the real requests, Kestrel data included.
 
@@ -92,13 +93,28 @@ step         overhead         system          tools        history   tool_result
 $ uv run python -m ch09.handbook_compare --fake
 handbook: 4 docs, 2102 chars
 [fake model: scripted replies; token counts are local estimates of the real requests]
-question              variant  steps  input tokens
-trade-late-delivery   A        1      811
-trade-late-delivery   B        3      2077
-training-over-limit   A        1      803
-training-over-limit   B        3      2015
-trade-returns         A        1      796
-trade-returns         B        3      1977
+question              variant  steps  input tokens  stale sent
+trade-late-delivery   A        1      811           yes
+trade-late-delivery   B        3      2077          no
+training-over-limit   A        1      803           -
+training-over-limit   B        3      2015          -
+trade-returns         A        1      796           -
+trade-returns         B        3      1977          -
+```
+
+`stale sent` says whether a phrase only the retired shipping page contains ("4 working days")
+reached the model in that variant's requests. `--crossover` grows a copy of the folder with
+synthetic filler pages and reruns the trade question:
+
+```text
+$ uv run python -m ch09.handbook_compare --fake --crossover
+[fake model: scripted replies; token counts are local estimates]
+filler pages  docs chars  A tokens  B tokens
+0             2102        811       2077
+2             5592        1699      2161
+4             9082        2588      2243
+8             16062       4365      2411
+32            57942       15027     3407
 ```
 
 ```text

@@ -1,12 +1,15 @@
 """Grace's policy questions, two ways: the whole handbook in the prompt, or two doc tools.
 
 uv run python -m ch09.handbook_compare --fake        # scripted replies, no key
+uv run python -m ch09.handbook_compare --fake --crossover   # grow the folder, find the crossover
 uv run --env-file .env python -m ch09.handbook_compare
 """
 
 import argparse
+import shutil
 from html import escape
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from pydantic import BaseModel
 
@@ -66,6 +69,18 @@ def paths_read(result: RunResult) -> set[str]:
     }
 
 
+def stale_sent(q: PolicyQuestion, texts: list[str]) -> bool | None:
+    """Did a phrase only the retired page contains reach the model? None: nothing to check."""
+    if not q.stale_facts:
+        return None
+    return any(f in t for f in q.stale_facts for t in texts)
+
+
+def request_texts(messages: list[Message]) -> list[str]:
+    """Everything a run sent besides the system prompt: messages and tool results."""
+    return [m.content for m in messages] + [r.content for m in messages for r in m.tool_results]
+
+
 class Row(BaseModel):
     question: str
     variant: str
@@ -73,6 +88,7 @@ class Row(BaseModel):
     input_tokens: int  # summed over every step's request
     answer: str
     read_paths: set[str] | None
+    stale_sent: bool | None  # the retired page's own wording was in a request
 
 
 def compare(
@@ -90,21 +106,24 @@ def compare(
         tokens_a = client_a.count_tokens(system, messages)
         answer_a = ask_whole_handbook(client_a, root, q.question, limits).text
         rows.append(Row(question=q.id, variant="A", steps=1, input_tokens=tokens_a,
-                        answer=answer_a, read_paths=None))  # fmt: skip
+                        answer=answer_a, read_paths=None,
+                        stale_sent=stale_sent(q, [system])))  # fmt: skip
         result = ask_with_tools(client_b, root, q.question, budget, limits, context)
         tokens_b = sum(s.context.total_input for s in result.steps if s.context)
         rows.append(Row(question=q.id, variant="B", steps=len(result.steps),
                         input_tokens=tokens_b, answer=result.final_text,
-                        read_paths=paths_read(result)))  # fmt: skip
+                        read_paths=paths_read(result),
+                        stale_sent=stale_sent(q, request_texts(result.messages))))  # fmt: skip
     return rows
 
 
 def print_rows(rows: list[Row], graded: bool) -> None:
     by_id = {q.id: q for q in QUESTIONS}
-    header = f"{'question':<22}{'variant':<9}{'steps':<7}{'input tokens':<14}"
+    header = f"{'question':<22}{'variant':<9}{'steps':<7}{'input tokens':<14}{'stale sent':<12}"
     print((header + ("correct  stale" if graded else "")).rstrip())
     for r in rows:
-        line = f"{r.question:<22}{r.variant:<9}{r.steps:<7}{r.input_tokens:<14}"
+        sent = "-" if r.stale_sent is None else ("yes" if r.stale_sent else "no")
+        line = f"{r.question:<22}{r.variant:<9}{r.steps:<7}{r.input_tokens:<14}{sent:<12}"
         if graded:
             q = by_id[r.question]
             ok, stale = is_correct(q, r.answer, r.read_paths), quotes_stale(q, r.answer)
@@ -112,13 +131,50 @@ def print_rows(rows: list[Row], graded: bool) -> None:
         print(line.rstrip())
 
 
+FILLER = (
+    "Kestrel staff use this page for day-to-day notes. It is synthetic filler for the growth "
+    "experiment: it answers none of Grace's questions, it only makes the folder bigger. "
+)
+
+
+def grow_folder(src: Path, dst: Path, extra: int) -> Path:
+    """A copy of the docs plus `extra` synthetic filler pages of about 1,700 characters."""
+    shutil.copytree(src, dst)
+    for n in range(1, extra + 1):
+        text = f"# Wiki page {n:02d} (synthetic filler)\n\n" + FILLER * 10
+        (dst / f"wiki-{n:02d}.md").write_text(text, encoding="utf-8")
+    return dst
+
+
+def crossover(src: Path, sizes: tuple[int, ...] = (0, 2, 4, 8, 32)) -> None:
+    """The trade question on growing folders, with the scripted fake model."""
+    from ch09.scripted import FAKE_BUDGET, FAKE_CONTEXT, FAKE_LIMITS, handbook_clients
+
+    question = QUESTIONS[:1]
+    print(f"{'filler pages':<14}{'docs chars':<12}{'A tokens':<10}B tokens")
+    for extra in sizes:
+        with TemporaryDirectory() as tmp:
+            root = grow_folder(src, Path(tmp) / "docs", extra)
+            chars = sum(len((root / p).read_text(encoding="utf-8")) for p in doc_paths(root))
+            a, b = compare(*handbook_clients(question), root, question,
+                           FAKE_BUDGET, FAKE_LIMITS, FAKE_CONTEXT)  # fmt: skip
+        print(f"{extra:<14}{chars:<12}{a.input_tokens:<10}{b.input_tokens}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Compare two context designs.")
     parser.add_argument("--fake", action="store_true", help="scripted fake model, no key")
     parser.add_argument("--docs", type=Path, default=DOCS_ROOT)
+    parser.add_argument("--crossover", action="store_true", help="with --fake: grow the folder")
     args = parser.parse_args()
     if not doc_paths(args.docs):
         raise SystemExit(f"error: no docs in {args.docs}; run `uv run kestrel up` here first")
+    if args.crossover:
+        if not args.fake:
+            parser.error("--crossover needs --fake")
+        print("[fake model: scripted replies; token counts are local estimates]")
+        crossover(args.docs)
+        return
 
     sizes = [len((args.docs / p).read_text(encoding="utf-8")) for p in doc_paths(args.docs)]
     print(f"handbook: {len(sizes)} docs, {sum(sizes)} chars")

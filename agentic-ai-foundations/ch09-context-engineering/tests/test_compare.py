@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 from ch09.grade import is_correct, quotes_stale
-from ch09.handbook_compare import compare, render_handbook
+from ch09.handbook_compare import compare, grow_folder, render_handbook
 from ch09.questions import QUESTIONS
 from ch09.scripted import FAKE_BUDGET, FAKE_CONTEXT, FAKE_LIMITS, handbook_clients
 from kestrel.workspace import copy_docs
@@ -48,3 +48,19 @@ def test_naming_a_path_the_run_never_read_is_not_correct():
 def test_relying_on_the_retired_page_is_caught_but_naming_it_is_not():
     assert quotes_stale(TRADE, "Standard delivery takes 4 working days.")
     assert not quotes_stale(TRADE, "shipping-policy-v2-OUTDATED.md is superseded; ignore it.")
+
+
+def test_only_variant_a_sends_the_retired_pages_wording(docs):
+    rows = compare(*handbook_clients(QUESTIONS), docs, QUESTIONS,
+                   FAKE_BUDGET, FAKE_LIMITS, FAKE_CONTEXT)  # fmt: skip
+    a, b = rows[0], rows[1]  # the trade question, which has a retired answer
+    assert (a.stale_sent, b.stale_sent) == (True, False)
+    assert rows[2].stale_sent is None  # no retired page to check for this question
+
+
+def test_a_growing_folder_flips_the_cheaper_design(docs, tmp_path):
+    question = QUESTIONS[:1]
+    big = grow_folder(docs, tmp_path / "grown", extra=8)
+    a, b = compare(*handbook_clients(question), big, question,
+                   FAKE_BUDGET, FAKE_LIMITS, FAKE_CONTEXT)  # fmt: skip
+    assert a.input_tokens > b.input_tokens  # small folder: A cheaper; eight more pages: B
