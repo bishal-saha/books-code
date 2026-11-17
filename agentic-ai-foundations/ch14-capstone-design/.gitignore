@@ -3,6 +3,6 @@
 # Your local settings, with your API key.
 .env
 # Traces from your own runs (Chapter 15 on): they hold real tool arguments and results.
-traces/
+/traces/
 # Your candidates and prices; start from models.example.toml.
 models.toml

@@ -5,4 +5,4 @@
 # Your candidates and prices; start from models.example.toml.
 models.toml
 # Traces from your own runs: they hold real tool arguments and results.
-traces/
+/traces/
