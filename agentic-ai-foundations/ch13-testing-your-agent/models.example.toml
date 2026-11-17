@@ -1,0 +1,40 @@
+# Copy to models.toml and replace every SET-ME. Each [[config]] is one candidate.
+# Model names, keys and base URLs stay in .env; these entries only name the variables.
+# A price is per million tokens, as strings, with the date you read it and the page you read.
+# Loading fails while a SET-ME is left in a price. Delete a [config.price] table to run that
+# candidate unpriced (a self-hosted server has no per-token price).
+
+[[config]]
+name = "hosted-sdk"
+provider = "anthropic"
+model_env = "MODEL"
+api_key_env = "ANTHROPIC_API_KEY"
+
+[config.price]
+input_per_mtok = "SET-ME"
+output_per_mtok = "SET-ME"
+as_of = "SET-ME"            # e.g. 2026-11-16
+source_url = "SET-ME"       # the seller's official pricing page
+
+[[config]]
+name = "hosted-compat-low-effort"
+provider = "openai_compatible"
+model_env = "OPENAI_COMPAT_MODEL"
+api_key_env = "OPENAI_COMPAT_API_KEY"
+base_url_env = "OPENAI_COMPAT_BASE_URL"
+reasoning_effort = "low"           # allowed values depend on the model; check its docs
+max_tokens_param = "max_tokens"    # set the name your endpoint's reference documents
+
+[config.price]
+input_per_mtok = "SET-ME"
+output_per_mtok = "SET-ME"
+as_of = "SET-ME"
+source_url = "SET-ME"
+
+[[config]]
+name = "local-server"
+provider = "openai_compatible"
+model_env = "LOCAL_COMPAT_MODEL"
+api_key_env = "LOCAL_COMPAT_API_KEY"
+base_url_env = "LOCAL_COMPAT_BASE_URL"
+# No price: reported as unpriced unless you add one you derived yourself, labelled an estimate.

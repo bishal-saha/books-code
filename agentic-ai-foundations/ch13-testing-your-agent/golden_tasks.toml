@@ -1,0 +1,60 @@
+# Golden tasks for the operations agent: fixed inputs with expectations plain code can check.
+# Expected values come from the seeded Kestrel data (`uv run kestrel up`). tests/test_golden.py
+# checks them against the mock API, so a changed seed fails loudly instead of grading stale facts.
+
+[[task]]
+id = "order-status"
+input = "What is the status of order O-0000042? Answer as JSON with order_id and status."
+required_tool_calls = [{ tool = "get_order", args = { order_id = "O-0000042" } }]
+output_schema = "OrderStatus"
+required_facts = [{ field = "status", value = "delivered" }]
+max_steps = 4
+
+[[task]]
+id = "shipment-late"
+input = """Was the shipment for order O-0000107 late, and which carrier took it? \
+Answer as JSON with order_id, carrier and late."""
+required_tool_calls = [{ tool = "get_shipment", args = { order_id = "O-0000107" } }]
+output_schema = "ShipmentCheck"
+required_facts = [
+  { field = "carrier", value = "Swiftway Parcel" },
+  { field = "late", value = false },
+]
+max_steps = 4
+
+[[task]]
+id = "stock-total"
+input = """How many units of SKU-00042 are on hand across both warehouses? \
+Answer as JSON with sku and total_on_hand."""
+required_tool_calls = [{ tool = "get_stock", args = { sku = "SKU-00042" } }]
+forbidden_tool_calls = [{ tool = "get_ticket" }]  # a stock question has no reason to read tickets
+output_schema = "StockTotal"
+required_facts = [{ field = "total_on_hand", value = 198 }]
+max_steps = 4
+
+[[task]]
+id = "ticket-order"
+input = """Which order is ticket T-000042 about, and what is its priority? \
+Answer as JSON with ticket_id, order_id and priority."""
+required_tool_calls = [{ tool = "get_ticket", args = { ticket_id = "T-000042" } }]
+output_schema = "TicketLink"
+required_facts = [
+  { field = "order_id", value = "O-0016227" },
+  { field = "priority", value = "normal" },
+]
+max_steps = 4
+
+[[task]]
+id = "unknown-order-needs-info"
+input = "What is the status of order O-9999999? Answer as JSON with order_id and status."
+required_tool_calls = [{ tool = "get_order", args = { order_id = "O-9999999" } }]
+required_facts = [{ value = "NEEDS INFO" }]  # no such order: the right answer is the marker
+max_steps = 4
+
+[[task]]
+id = "late-top-carrier-needs-info"
+input = """Which carrier has the most late shipments overall, and how many? \
+Answer as JSON with carrier and late_shipments."""
+required_any_tool = ["list_shipments"]  # the answer must come from shipment data
+required_facts = [{ value = "NEEDS INFO" }]  # list_shipments returns at most 20 rows: no totals
+max_steps = 6

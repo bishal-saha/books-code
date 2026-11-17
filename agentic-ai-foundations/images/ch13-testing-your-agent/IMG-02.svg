@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">eval.py: fresh, graded trials inside a cost cap</title>
+  <desc id="d">Flowchart. golden_tasks.toml feeds a loop that runs trial by trial, and within each trial task by task (trial-major). For each task the runner asks whether the eval has spent EVAL_MAX_COST_USD. If yes, the trial is recorded as skipped. If no, it starts a fresh run with a new client and its own run budget, which writes a new trace file named after the task and trial. The trace is graded by grade(task, trace), giving a TrialResult that is graded or error. When the loop finishes, the report shows per task the pass rate, pass@k, pass^k, average cost and average steps.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="72" font-size="40" font-weight="600">eval.py: every trial is fresh, graded and capped</text>
+    <path d="M60 170 h220 l40 40 v110 h-260 z" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="190" y="250" font-size="26" font-weight="600" text-anchor="middle">golden_tasks</text>
+    <text x="190" y="282" font-size="26" font-weight="600" text-anchor="middle">.toml</text>
+    <line x1="320" y1="265" x2="374" y2="265" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="380" y="125" width="1160" height="555" rx="20" fill="none" stroke="#6366F1" stroke-width="3" stroke-dasharray="12 8"/>
+    <text x="404" y="166" font-size="24" font-weight="600" fill="#A5B4FC">for trial 1..k, then each task (trial-major)</text>
+    <polygon points="620,215 800,320 620,425 440,320" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="620" y="312" font-size="26" font-weight="600" text-anchor="middle">Spent ≥</text>
+    <text x="620" y="344" font-size="22" text-anchor="middle">EVAL_MAX_COST_USD?</text>
+    <line x1="620" y1="425" x2="620" y2="514" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="636" y="478" font-size="22" fill="#F59E0B">yes</text>
+    <rect x="470" y="520" width="300" height="110" rx="14" fill="#1E293B" stroke="#334155" stroke-width="3"/>
+    <text x="620" y="566" font-size="26" font-weight="600" text-anchor="middle">Record trial</text>
+    <text x="620" y="600" font-size="26" font-weight="600" text-anchor="middle">as skipped</text>
+    <line x1="800" y1="320" x2="874" y2="320" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="822" y="306" font-size="22" fill="#F59E0B">no</text>
+    <rect x="880" y="255" width="320" height="130" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="1040" y="302" font-size="26" font-weight="600" text-anchor="middle">Fresh run</text>
+    <text x="1040" y="336" font-size="22" text-anchor="middle">new client, own run</text>
+    <text x="1040" y="364" font-size="22" text-anchor="middle">budget, run_agent</text>
+    <line x1="1200" y1="320" x2="1254" y2="320" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <path d="M1260 262 v100 a120 20 0 0 0 240 0 v-100" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <ellipse cx="1380" cy="262" rx="120" ry="20" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="1380" y="318" font-size="26" font-weight="600" text-anchor="middle">New trace</text>
+    <text x="1380" y="350" font-size="22" text-anchor="middle">task-t&lt;n&gt;.jsonl</text>
+    <line x1="1380" y1="384" x2="1380" y2="514" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="1220" y="520" width="300" height="110" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="1370" y="566" font-size="26" font-weight="600" text-anchor="middle">grade(task,</text>
+    <text x="1370" y="600" font-size="26" font-weight="600" text-anchor="middle">trace)</text>
+    <line x1="1218" y1="575" x2="1108" y2="575" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="800" y="520" width="300" height="110" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="950" y="566" font-size="26" font-weight="600" text-anchor="middle">TrialResult</text>
+    <text x="950" y="600" font-size="22" text-anchor="middle">graded or error</text>
+    <line x1="960" y1="680" x2="960" y2="734" stroke="#CBD5E1" stroke-width="3" marker-end="url(#arrow)"/>
+    <rect x="380" y="740" width="1160" height="100" rx="50" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="960" y="784" font-size="26" font-weight="600" text-anchor="middle">Report per task</text>
+    <text x="960" y="818" font-size="22" text-anchor="middle">pass rate · pass@k · pass^k · avg cost · avg steps</text>
+  </g>
+</svg>
