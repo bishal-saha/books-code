@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="t d">
+  <title id="t">Checking a final answer: one retry, then rejected</title>
+  <desc id="d">When the model ends its turn, check_final validates the FinalAnswer and checks every citation against the citable set. An accepted answer ends the run as answered or needs_info. A failed check sends one retry message with the errors and the citable set; this counts as a step. If the second answer also fails, the run ends with StopCause finished and no answer, reported as rejected, exit code 4.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+    <style>
+      text { font-family: Inter, "Segoe UI", system-ui, sans-serif; fill: #CBD5E1; }
+      .h { font-size: 40px; font-weight: 600; fill: #F8FAFC; }
+      .l { font-size: 27px; font-weight: 600; fill: #F8FAFC; }
+      .n { font-size: 22px; }
+      .box { fill: #1E293B; stroke: #334155; stroke-width: 3; }
+      .ln { stroke: #CBD5E1; stroke-width: 3; fill: none; stroke-linejoin: round; marker-end: url(#a); }
+    </style>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <text x="80" y="92" class="h">A final answer gets one retry, then it is rejected</text>
+
+  <!-- 1 model ends turn -->
+  <rect x="80" y="230" width="280" height="110" rx="55" class="box" stroke="#6366F1"/>
+  <text x="220" y="280" text-anchor="middle" class="l">Model ends</text>
+  <text x="220" y="314" text-anchor="middle" class="l">its turn</text>
+
+  <!-- 2 check -->
+  <rect x="460" y="215" width="330" height="140" rx="14" class="box" stroke="#F59E0B"/>
+  <text x="625" y="270" text-anchor="middle" class="l">check_final</text>
+  <text x="625" y="306" text-anchor="middle" class="n">1. FinalAnswer schema</text>
+  <text x="625" y="336" text-anchor="middle" class="n">2. citations vs citable set</text>
+  <path d="M360 285 L452 285" class="ln"/>
+
+  <!-- accepted -->
+  <rect x="980" y="215" width="540" height="140" rx="14" class="box" stroke="#14B8A6"/>
+  <text x="1250" y="272" text-anchor="middle" class="l">Accepted: answered or needs_info</text>
+  <text x="1250" y="312" text-anchor="middle" class="n">StopCause finished, exit 0 or 3</text>
+  <path d="M790 285 L972 285" class="ln"/>
+  <text x="820" y="268" class="n">passes</text>
+
+  <!-- retry -->
+  <rect x="460" y="500" width="330" height="140" rx="14" class="box" stroke="#6366F1"/>
+  <text x="625" y="556" text-anchor="middle" class="l">One retry message</text>
+  <text x="625" y="592" text-anchor="middle" class="n">errors + citable set</text>
+  <text x="625" y="622" text-anchor="middle" class="n">counts as a step</text>
+  <path d="M625 355 L625 492" class="ln"/>
+  <text x="645" y="430" class="n">fails (first time)</text>
+  <path d="M460 570 C300 570 220 470 220 348" class="ln"/>
+  <text x="120" y="470" class="n">next step</text>
+
+  <!-- rejected -->
+  <rect x="980" y="500" width="540" height="140" rx="14" class="box" stroke="#F43F5E"/>
+  <text x="1250" y="556" text-anchor="middle" class="l">Rejected: no answer printed</text>
+  <text x="1250" y="596" text-anchor="middle" class="n">StopCause finished, answer = None, exit 4</text>
+  <path d="M790 320 C900 360 900 520 972 560" class="ln"/>
+  <text x="912" y="410" class="n">fails again</text>
+
+  <text x="80" y="770" class="n">The rejected text stays in the trace for review. Code never writes a needs_info answer for the model</text>
+  <text x="80" y="808" class="n">and never deletes a bad citation. A budget limit hit first ends the run as stopped (exit 5).</text>
+</svg>

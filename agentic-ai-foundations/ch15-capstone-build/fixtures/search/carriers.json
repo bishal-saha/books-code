@@ -1,0 +1,24 @@
+{
+  "note": "Hand-written search results for the fake search backend, not a recording. Invented for the book: the carriers are fictional and every URL is on example.com.",
+  "results": {
+    "Harbour Express": [
+      {
+        "title": "Harbour Express reviews: parcel delivery",
+        "url": "https://reviews.example.com/harbour-express",
+        "snippet": "Customers mention missed delivery windows on regional routes; several reviews say tracking updates lag behind the parcel."
+      },
+      {
+        "title": "Harbour Express adds weekend collections",
+        "url": "https://news.example.com/2025/11/harbour-express-weekend",
+        "snippet": "The carrier says weekend collections start in two regions, aimed at reducing weekday backlogs."
+      }
+    ],
+    "Swiftway Parcel": [
+      {
+        "title": "Swiftway Parcel reviews: parcel delivery",
+        "url": "https://reviews.example.com/swiftway-parcel",
+        "snippet": "Reviewers describe slow regional deliveries in the busy season, and quick responses from customer service."
+      }
+    ]
+  }
+}
