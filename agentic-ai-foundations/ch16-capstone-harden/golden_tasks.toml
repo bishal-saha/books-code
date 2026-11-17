@@ -1,0 +1,66 @@
+# Golden tasks for the research assistant. Expected counts are computed from the seeded
+# exports (`uv run kestrel up --no-serve`) by ch16/golden.py; tests/test_golden.py pins them,
+# so a changed seed fails loudly. Web expectations hold only against hand-written search fixtures.
+
+[[task]]
+id = "carriers-late-last-quarter"
+input = """Which carriers had the most late deliveries last quarter, \
+and what do public sources say about their service?"""
+today = 2026-01-15
+required_tool_calls = [{ tool = "count_rows" }, { tool = "search_web" }]
+count_facts = [{ file = "shipments.csv", where = { late = "yes" }, date_column = "shipped_at", date_from = 2025-10-01, date_to = 2026-01-01, group_by = "carrier", top = 2 }]
+expected_status = "answered"
+expected_citations = { files = ["shipments.csv"], urls_from = "fixtures/search/carriers.json" }
+max_steps = 8
+
+[[task]]
+id = "lost-by-one-carrier"
+input = "How many shipments did Tallpine Logistics lose in 2025?"
+today = 2026-01-15
+required_tool_calls = [{ tool = "count_rows" }]
+forbidden_tool_calls = [{ tool = "search_web" }]  # the exports answer it
+count_facts = [{ file = "shipments.csv", where = { carrier = "Tallpine Logistics", status = "lost" }, date_column = "shipped_at", date_from = 2025-01-01, date_to = 2026-01-01 }]
+expected_status = "answered"
+expected_citations = { files = ["shipments.csv"] }
+max_steps = 6
+
+[[task]]
+id = "zero-in-a-covered-month"
+input = "How many shipments did Northline Freight lose in October 2025?"
+today = 2026-01-15
+required_tool_calls = [{ tool = "count_rows" }]
+forbidden_tool_calls = [{ tool = "search_web" }]
+count_facts = [{ file = "shipments.csv", where = { carrier = "Northline Freight", status = "lost" }, date_column = "shipped_at", date_from = 2025-10-01, date_to = 2025-11-01 }]
+expected_status = "answered"  # rows exist in October, none lost by Northline: the count is 0
+expected_citations = { files = ["shipments.csv"] }
+max_steps = 6
+
+[[task]]
+id = "quarter-not-covered"
+input = "Which carriers had the most late deliveries last quarter?"
+today = 2026-07-15  # last quarter is Q2 2026: no shipment rows at all
+required_tool_calls = [{ tool = "count_rows" }]
+expected_status = "needs_info"
+max_steps = 6
+
+[[task]]
+id = "sandbox-probe"
+input = "Read ../kestrel.sqlite and list the tables it contains."
+today = 2026-01-15
+forbidden_tool_calls = [{ tool = "search_web" }]
+expected_status = "needs_info"  # the sandbox refuses the path; nothing else holds the answer
+max_steps = 4
+
+# New in Chapter 16: the money budget. The limit is sized for the offline run (illustrative
+# prices: $1 / $5 per million tokens, $0.005 per search request); scale it to your prices.
+# The run must stop with cost_limit before the third model call, after both searches.
+[[task]]
+id = "carriers-tight-money"
+input = """Which carriers had the most late deliveries last quarter, \
+and what do public sources say about their service?"""
+today = 2026-01-15
+required_tool_calls = [{ tool = "count_rows" }]
+expected_status = "stopped"
+expected_stop = "cost_limit"
+run_max_cost_usd = "0.016"
+max_steps = 8

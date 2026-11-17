@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="t d">
+  <title id="t">Every wait takes its limit from the time left in the run budget</title>
+  <desc id="d">The run budget's wall time, RUN_MAX_SECONDS, gives the time left. Three things read it. A model call gets the smaller of MODEL_TIMEOUT_S and the time left divided by the SDK's tries, so a call and its one SDK retry fit. Each search attempt gets the smaller of SEARCH_TIMEOUT_S and the time left, and retry_call waits between attempts only if the wait and another attempt still fit. The loop checks the time before each model call and right after tool calls; when too little is left the run stops with time_limit.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+    <style>
+      text { font-family: Inter, "Segoe UI", system-ui, sans-serif; fill: #CBD5E1; }
+      .h { font-size: 40px; font-weight: 600; fill: #F8FAFC; }
+      .l { font-size: 27px; font-weight: 600; fill: #F8FAFC; }
+      .n { font-size: 22px; }
+      .m { font-size: 22px; font-family: "JetBrains Mono", Menlo, Consolas, monospace; fill: #E2E8F0; }
+      .box { fill: #1E293B; stroke-width: 3; }
+      .ln { stroke: #CBD5E1; stroke-width: 3; fill: none; stroke-linejoin: round; marker-end: url(#a); }
+    </style>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <text x="80" y="92" class="h">One clock for every wait: the time left in the run</text>
+
+  <!-- run budget -->
+  <rect x="80" y="330" width="380" height="220" rx="14" class="box" stroke="#6366F1"/>
+  <rect x="80" y="330" width="380" height="10" rx="5" fill="#6366F1"/>
+  <text x="270" y="395" text-anchor="middle" class="l">Run budget</text>
+  <text x="270" y="435" text-anchor="middle" class="m">RUN_MAX_SECONDS 120</text>
+  <text x="270" y="490" text-anchor="middle" class="n">time left =</text>
+  <text x="270" y="520" text-anchor="middle" class="n">120 s minus time used</text>
+
+  <!-- model call -->
+  <rect x="620" y="150" width="560" height="170" rx="14" class="box" stroke="#6366F1"/>
+  <text x="900" y="205" text-anchor="middle" class="l">Model call</text>
+  <text x="900" y="248" text-anchor="middle" class="m">min(MODEL_TIMEOUT_S,</text>
+  <text x="900" y="278" text-anchor="middle" class="m">time left / SDK tries)</text>
+  <text x="900" y="308" text-anchor="middle" class="n">a call and its SDK retry both fit</text>
+  <path d="M460 390 C540 390 540 235 612 235" class="ln"/>
+
+  <!-- search attempt -->
+  <rect x="620" y="370" width="560" height="170" rx="14" class="box" stroke="#14B8A6"/>
+  <text x="900" y="425" text-anchor="middle" class="l">search_web attempt</text>
+  <text x="900" y="468" text-anchor="middle" class="m">min(SEARCH_TIMEOUT_S, time left)</text>
+  <text x="900" y="500" text-anchor="middle" class="n">retry_call waits only if the wait</text>
+  <text x="900" y="528" text-anchor="middle" class="n">and one more attempt still fit</text>
+  <path d="M460 455 L612 455" class="ln"/>
+
+  <!-- loop checks -->
+  <rect x="620" y="590" width="560" height="170" rx="14" class="box" stroke="#F59E0B"/>
+  <text x="900" y="645" text-anchor="middle" class="l">Loop check</text>
+  <text x="900" y="688" text-anchor="middle" class="n">before each model call</text>
+  <text x="900" y="720" text-anchor="middle" class="n">and right after tool calls</text>
+  <path d="M460 520 C540 520 540 675 612 675" class="ln"/>
+
+  <!-- stop -->
+  <rect x="1270" y="605" width="250" height="140" rx="70" class="box" stroke="#F43F5E"/>
+  <text x="1395" y="665" text-anchor="middle" class="l">Stop</text>
+  <text x="1395" y="703" text-anchor="middle" class="m">time_limit</text>
+  <path d="M1180 675 L1262 675" class="ln"/>
+  <text x="1395" y="790" text-anchor="middle" class="n">when too little time is left</text>
+
+  <text x="80" y="840" class="n">Retries never get a fresh full timeout: each attempt is cut to what the run has left.</text>
+</svg>

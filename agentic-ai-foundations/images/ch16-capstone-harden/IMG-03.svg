@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="t d">
+  <title id="t">The eval: every golden task, several trials, one report row per task</title>
+  <desc id="d">Golden tasks come from golden_tasks.toml. For each trial number, every task runs once, trial-major, unless the eval cap EVAL_MAX_COST_USD has been reached, in which case the trial is skipped. Each trial is a fresh run_research with its own run budget and its own JSONL trace at traces, eval id, task id dash t trial. Chapter 15's grade function checks the result and gives a trial status: passed, failed or error. The report has one row per task with pass count, pass^k, average and maximum cost, average steps and stop causes.</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+    <style>
+      text { font-family: Inter, "Segoe UI", system-ui, sans-serif; fill: #CBD5E1; }
+      .h { font-size: 40px; font-weight: 600; fill: #F8FAFC; }
+      .l { font-size: 27px; font-weight: 600; fill: #F8FAFC; }
+      .n { font-size: 22px; }
+      .m { font-size: 21px; font-family: "JetBrains Mono", Menlo, Consolas, monospace; fill: #E2E8F0; }
+      .box { fill: #1E293B; stroke-width: 3; }
+      .ln { stroke: #CBD5E1; stroke-width: 3; fill: none; stroke-linejoin: round; marker-end: url(#a); }
+      .ln2 { stroke: #CBD5E1; stroke-width: 2; fill: none; stroke-dasharray: 10 8; marker-end: url(#a); }
+    </style>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <text x="80" y="92" class="h">Repeated trials, graded by code, summed per golden task</text>
+
+  <!-- tasks store -->
+  <path d="M80 330 v150 a130 30 0 0 0 260 0 v-150" class="box" stroke="#14B8A6"/>
+  <ellipse cx="210" cy="330" rx="130" ry="30" class="box" stroke="#14B8A6"/>
+  <text x="210" y="415" text-anchor="middle" class="l">Golden tasks</text>
+  <text x="210" y="452" text-anchor="middle" class="m">golden_tasks.toml</text>
+
+  <!-- cap gate -->
+  <rect x="420" y="330" width="300" height="160" rx="14" class="box" stroke="#F59E0B"/>
+  <text x="570" y="388" text-anchor="middle" class="l">Trial t of each task</text>
+  <text x="570" y="426" text-anchor="middle" class="n">trial-major order</text>
+  <text x="570" y="460" text-anchor="middle" class="m">EVAL_MAX_COST_USD</text>
+  <path d="M340 410 L412 410" class="ln"/>
+  <path d="M570 490 L570 600" class="ln2"/>
+  <rect x="415" y="610" width="310" height="70" rx="35" class="box" stroke="#334155"/>
+  <text x="570" y="654" text-anchor="middle" class="n">cap reached: skipped</text>
+
+  <!-- run -->
+  <rect x="800" y="330" width="320" height="160" rx="14" class="box" stroke="#6366F1"/>
+  <text x="960" y="388" text-anchor="middle" class="l">run_research</text>
+  <text x="960" y="426" text-anchor="middle" class="n">fresh run budget</text>
+  <text x="960" y="460" text-anchor="middle" class="n">fake or live model</text>
+  <path d="M720 410 L792 410" class="ln"/>
+
+  <!-- trace -->
+  <rect x="800" y="600" width="320" height="110" rx="14" class="box" stroke="#14B8A6"/>
+  <text x="960" y="645" text-anchor="middle" class="l">Trace (JSONL)</text>
+  <text x="960" y="684" text-anchor="middle" class="m">&lt;eval_id&gt;/&lt;task&gt;-t&lt;t&gt;</text>
+  <path d="M960 490 L960 592" class="ln2"/>
+
+  <!-- grade -->
+  <rect x="1200" y="200" width="320" height="150" rx="14" class="box" stroke="#6366F1"/>
+  <text x="1360" y="258" text-anchor="middle" class="l">grade()</text>
+  <text x="1360" y="296" text-anchor="middle" class="n">passed, failed</text>
+  <text x="1360" y="326" text-anchor="middle" class="n">or error</text>
+  <path d="M1120 380 C1160 380 1160 275 1192 275" class="ln"/>
+
+  <!-- report -->
+  <rect x="1200" y="430" width="320" height="230" rx="14" class="box" stroke="#F59E0B"/>
+  <text x="1360" y="485" text-anchor="middle" class="l">Report row per task</text>
+  <text x="1360" y="525" text-anchor="middle" class="n">pass and pass^k</text>
+  <text x="1360" y="558" text-anchor="middle" class="n">average and max cost</text>
+  <text x="1360" y="591" text-anchor="middle" class="n">average steps</text>
+  <text x="1360" y="624" text-anchor="middle" class="n">stop causes</text>
+  <path d="M1360 350 L1360 422" class="ln"/>
+
+  <text x="80" y="820" class="n">The grader reads the run's result, never the answer's wording; trial status stays separate from StopCause.</text>
+</svg>
