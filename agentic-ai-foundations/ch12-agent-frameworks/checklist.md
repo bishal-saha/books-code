@@ -40,3 +40,5 @@ general; these gates test fit to our callers.
 
 Gates not yet answered by the docs: spike first (fake-model tests against the
 candidate), then adopt or build.
+Partial adoption counts: a framework can own one capability (an approval pause,
+checkpoints) while our loop stays the agent step.

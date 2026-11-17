@@ -1,6 +1,8 @@
 # Decision: return authorisations with human approval
 
 Decision: spike, then adopt LangGraph if it passes gates 2 to 5; else build.
+Spike first: run_agent stays the agent node; LangGraph owns only the graph,
+checkpoints and approval edge. Then, if needed, LangGraph for the whole run.
 Placement: agent with a wider tool set: the model picks the lookups and whether
 to propose a return; code fixes one edge, approval before the write
 (create_return_authorisation, local SQLite store, Chapter 8).
