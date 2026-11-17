@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+  <title id="t">Two designs for Grace's policy questions</title>
+  <desc id="d">Left, variant A: the question goes to one model call whose prompt holds every handbook page, the current shipping policy and the retired one side by side, and the answer comes back in one step. Every page is sent on every question. Right, variant B: the prompt holds instructions only. The agent calls list_docs, which returns paths, titles and lengths, including a title that says the old shipping policy is superseded. It then calls read_doc on one path and gets a capped result with an origin header, and answers naming that path. Three steps, and it reads only what it needs.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#CBD5E1"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" rx="24" fill="#0B1530"/>
+  <g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+    <text x="80" y="88" font-size="40" font-weight="600">Whole handbook, or two small tools</text>
+
+    <!-- panel A -->
+    <text x="80" y="160" font-size="30" font-weight="600">Variant A: whole handbook in the prompt</text>
+    <rect x="80" y="200" width="280" height="80" rx="40" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="220" y="250" font-size="26" text-anchor="middle">Question</text>
+    <path d="M220 280 L220 330" stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+    <rect x="80" y="340" width="640" height="330" rx="14" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="110" y="388" font-size="28" font-weight="600">One model call</text>
+    <text x="110" y="426" font-size="22">prompt: instructions plus every doc</text>
+    <rect x="110" y="450" width="280" height="56" rx="10" fill="#14B8A6" fill-opacity="0.25" stroke="#14B8A6" stroke-width="2"/>
+    <text x="250" y="486" font-size="22" text-anchor="middle">expense-policy.md</text>
+    <rect x="410" y="450" width="280" height="56" rx="10" fill="#14B8A6" fill-opacity="0.25" stroke="#14B8A6" stroke-width="2"/>
+    <text x="550" y="486" font-size="22" text-anchor="middle">returns-policy.md</text>
+    <rect x="110" y="520" width="280" height="56" rx="10" fill="#14B8A6" fill-opacity="0.25" stroke="#14B8A6" stroke-width="2"/>
+    <text x="250" y="556" font-size="22" text-anchor="middle">shipping-policy.md</text>
+    <rect x="410" y="520" width="280" height="56" rx="10" fill="#1E293B" stroke="#F43F5E" stroke-width="2" stroke-dasharray="8 6"/>
+    <text x="550" y="556" font-size="22" text-anchor="middle">retired v2 page</text>
+    <text x="110" y="630" font-size="22">current and retired side by side</text>
+    <path d="M400 670 L400 720" stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+    <rect x="260" y="730" width="280" height="80" rx="40" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="400" y="780" font-size="26" text-anchor="middle">Answer</text>
+    <text x="80" y="860" font-size="22">1 step · every page on every question</text>
+
+    <line x1="800" y1="140" x2="800" y2="860" stroke="#334155" stroke-width="2"/>
+
+    <!-- panel B -->
+    <text x="860" y="160" font-size="30" font-weight="600">Variant B: list_docs and read_doc</text>
+    <rect x="860" y="200" width="280" height="80" rx="40" fill="#1E293B" stroke="#F59E0B" stroke-width="3"/>
+    <text x="1000" y="250" font-size="26" text-anchor="middle">Question</text>
+    <path d="M1000 280 L1000 330" stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+    <rect x="860" y="340" width="660" height="120" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="890" y="386" font-size="28" font-weight="600">list_docs</text>
+    <text x="890" y="428" font-size="22">paths, titles, lengths; one title says "superseded"</text>
+    <path d="M1000 460 L1000 510" stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+    <rect x="860" y="520" width="660" height="120" rx="14" fill="#1E293B" stroke="#14B8A6" stroke-width="3"/>
+    <text x="890" y="566" font-size="28" font-weight="600">read_doc(path)</text>
+    <text x="890" y="604" font-size="22">one doc, capped, with an origin header</text>
+    <path d="M1000 640 L1000 720" stroke="#CBD5E1" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+    <rect x="860" y="730" width="400" height="80" rx="40" fill="#1E293B" stroke="#6366F1" stroke-width="3"/>
+    <text x="1060" y="780" font-size="26" text-anchor="middle">Answer names the path</text>
+    <text x="860" y="860" font-size="22">3 steps · reads only what it needs</text>
+  </g>
+</svg>
