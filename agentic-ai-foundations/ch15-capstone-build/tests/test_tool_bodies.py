@@ -86,7 +86,7 @@ def test_count_rows_names_unknown_columns_and_bad_dates(tmp_path: Path) -> None:
     root = tmp_path.resolve()
     with pytest.raises(ToolError, match="no column late"):
         count_rows(CountRowsArgs(path="s.csv", where={"late": "yes"}), root)
-    with pytest.raises(ToolError, match="line 3: 'soon' is not an ISO date"):
+    with pytest.raises(ToolError, match="record 2: 'soon' is not an ISO date"):
         count_rows(CountRowsArgs(path="s.csv", date_column="shipped_at"), root)
 
 
@@ -186,3 +186,29 @@ def test_successful_results_fill_the_citable_set(exports: Path) -> None:
     results = [registry.dispatch(c) for c in calls]
     assert [r.is_error for r in results] == [False, False, True, False]
     assert registry.citable == {"https://reviews.example.com/swiftway-parcel", "shipments.csv"}
+
+
+def test_count_rows_keeps_quoted_newlines_and_refuses_an_empty_file(tmp_path: Path) -> None:
+    (tmp_path / "t.csv").write_text('id,note,carrier\n1,"two\nlines",A\n2,plain,A\n')
+    (tmp_path / "empty.csv").write_text("")
+    root = tmp_path.resolve()
+    result = count_rows(CountRowsArgs(path="t.csv", group_by="carrier"), root)
+    assert (result.rows_in_file, result.by_group) == (2, {"A": 2})
+    with pytest.raises(ToolError, match="empty.csv is empty"):
+        count_rows(CountRowsArgs(path="empty.csv"), root)
+
+
+def test_try_sandbox_shows_refusals_as_error_results(exports, monkeypatch, capsys) -> None:
+    from ch15 import try_sandbox
+
+    monkeypatch.setenv("EXPORTS_DIR", str(exports))
+    try_sandbox.main()
+    lines = capsys.readouterr().out.splitlines()
+    assert [line.split(" -> ")[1].split(":")[0] for line in lines[:5]] == [
+        "ERROR",
+        "ERROR",
+        "ERROR",
+        "ERROR",
+        "ok",
+    ]
+    assert lines[5] == "citable: ['shipments.csv']"

@@ -10,6 +10,7 @@ and build_registry's citable_from argument.
 """
 
 import csv
+import io
 import json
 import re
 from collections import Counter
@@ -221,16 +222,17 @@ COUNT_ROWS = (
 
 def count_rows(args: CountRowsArgs, root: Path) -> CountRowsResult:
     name, text = read_text(root, args.path)
-    reader = csv.DictReader(text.splitlines())
-    columns = set(reader.fieldnames or ())
+    reader = csv.DictReader(io.StringIO(text, newline=""))  # quoted newlines stay in one row
+    if not reader.fieldnames:
+        raise ToolError(f"{name} is empty: it has no header row to count by.")
     asked = [*args.where, args.date_column, args.group_by]
-    if unknown := sorted({c for c in asked if c} - columns):
+    if unknown := sorted({c for c in asked if c} - set(reader.fieldnames)):
         raise ToolError(
             f"{name} has no column {', '.join(unknown)}. Columns: {', '.join(reader.fieldnames)}."
         )
     in_file = in_period = matched = 0
     groups: Counter[str] = Counter()
-    for line, row in enumerate(reader, start=2):  # line 1 is the header
+    for row in reader:
         in_file += 1
         if args.date_column:
             cell = row[args.date_column]
@@ -239,7 +241,7 @@ def count_rows(args: CountRowsArgs, root: Path) -> CountRowsResult:
             try:
                 day = date.fromisoformat(cell[:10])
             except ValueError:
-                raise ToolError(f"{name} line {line}: {cell!r} is not an ISO date.") from None
+                raise ToolError(f"{name} record {in_file}: {cell!r} is not an ISO date.") from None
             if (args.date_from and day < args.date_from) or (args.date_to and day >= args.date_to):
                 continue
         in_period += 1

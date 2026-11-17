@@ -18,7 +18,7 @@
 ```bash
 cd books-code/agentic-ai-foundations/ch15-capstone-build
 uv run kestrel up --no-serve                                  # writes .kestrel/ (exports, docs)
-uv run pytest                                                 # 95 tests
+uv run pytest                                                 # 97 tests
 uv run python -m ch15.cli --demo carriers-late-last-quarter   # fake model, no key
 ```
 
