@@ -3,15 +3,12 @@
 uv run python -m ch12.edges     # needs the mock API: uv run kestrel up
 
 The model is a fake: its replies are scripted below, so the output is fake-model output.
-The tool calls are real and go to the Kestrel mock API.
+The tool calls are real and go to the Kestrel mock API, through Chapter 11's read-only tools.
 """
 
 import itertools
 import os
 from collections.abc import Callable
-from functools import partial
-
-import httpx
 
 from ch12.annotated_agent import RunResult, print_steps, run_agent
 from ch12.budget import CallLimits, RunBudget
@@ -19,47 +16,12 @@ from ch12.fake_model import FakeModelClient, ScriptItem
 from ch12.lookups import kestrel_client
 from ch12.model_client import ModelResponse, ToolCall, Usage
 from ch12.prompts import load_prompt
-from ch12.registry import Tool, ToolRegistry
+from ch12.registry import ToolRegistry
 from ch12.settings import DEFAULT_KESTREL_URL
-from ch12.tools import (
-    DELIVERY_STATUS_DESCRIPTION,
-    GET_POLICY_DESCRIPTION,
-    GET_TICKET_DESCRIPTION,
-    LIST_SHIPMENTS_DESCRIPTION,
-    GetDeliveryStatusArgs,
-    GetPolicyArgs,
-    GetTicketArgs,
-    ListShipmentsArgs,
-    get_delivery_status,
-    get_policy,
-    get_ticket,
-    list_shipments,
-)
+from ch12.tools import build_registry
 
-BUDGET = RunBudget(max_steps=3, max_total_tokens=20_000, max_wall_seconds=60.0)
+BUDGET = RunBudget(max_steps=4, max_total_tokens=20_000, max_wall_seconds=60.0)
 LIMITS = CallLimits(max_output_tokens=1_024, timeout_seconds=30.0)
-
-
-HINTS = {"get_delivery_status": {"order_or_ticket_id": "Use O- and 7 digits or T- and 6 digits."}}
-
-
-def read_only_registry(http: httpx.Client) -> ToolRegistry:
-    """Chapter 8's four read tools, without the write: the late-shipment agent's reach."""
-    registry = ToolRegistry()
-    for name, description, args_model, function in [
-        (
-            "get_delivery_status",
-            DELIVERY_STATUS_DESCRIPTION,
-            GetDeliveryStatusArgs,
-            get_delivery_status,
-        ),
-        ("list_shipments", LIST_SHIPMENTS_DESCRIPTION, ListShipmentsArgs, list_shipments),
-        ("get_ticket", GET_TICKET_DESCRIPTION, GetTicketArgs, get_ticket),
-        ("get_policy", GET_POLICY_DESCRIPTION, GetPolicyArgs, get_policy),
-    ]:
-        hints = HINTS.get(name, {})
-        registry.register(Tool(name, description, args_model, partial(function, http), hints))
-    return registry
 
 
 def ask(name: str, arguments: dict, n: int) -> ModelResponse:
@@ -75,9 +37,10 @@ def ticking_clock(step: float = 0.2) -> Callable[[], float]:
     return lambda: next(counter) * step
 
 
-UNKNOWN_TOOL: list[ScriptItem] = [
+BAD_CALLS: list[ScriptItem] = [
     ask("get_delivery_status", {"order_or_ticket_id": "T-000281"}, 1),
-    ask("track_parcel", {"order_id": "O-0013833"}, 2),  # not in the registry
+    ask("get_delivery_status", {"order_or_ticket_id": "T-000281", "verbose": True}, 2),
+    ask("track_parcel", {"order_id": "O-0013833"}, 3),  # not in the registry
     (
         "Ticket T-000281 is about order O-0013833, delivered late by Harbour Express on "
         "2025-06-27. NEEDS INFO: no tool tracks the parcel itself."
@@ -98,13 +61,14 @@ def run(script: list[ScriptItem], registry: ToolRegistry) -> RunResult:
 def main() -> None:
     url = os.environ.get("KESTREL_URL", DEFAULT_KESTREL_URL)
     with kestrel_client(url) as http:
-        registry = read_only_registry(http)
+        registry = build_registry(http)  # Chapter 11's read-only tools
 
-        print("== unknown tool (fake model)")
-        result = run(UNKNOWN_TOOL, registry)
+        print("== an invented argument, then an unknown tool (fake model)")
+        result = run(BAD_CALLS, registry)
         print_steps(result, BUDGET)
-        error = result.messages[4].tool_results[0]  # the reply to the second tool call
-        print(f"tool result: is_error={error.is_error} {error.content}")
+        for n in (2, 3):  # the results of the second and third tool calls
+            error = result.messages[2 * n].tool_results[0]
+            print(f"tool result {n}: is_error={error.is_error} {error.content}")
 
         print("\n== a model that never ends its turn (fake model)")
         result = run(NEVER_ENDS, registry)

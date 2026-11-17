@@ -1,7 +1,7 @@
-"""Chapter 6's fake model: scripted responses, every request recorded.
+"""Chapter 7's fake model: scripted responses, every request recorded.
 
-New in Chapter 7: it accepts and records the per-call `timeout`, so tests can check that the
-loop shrinks each call to the time left in the run.
+New in Chapter 9: count_tokens() returns a deterministic local estimate (provider_counts is
+False), and every count request is recorded, so tests can check how often the inspector counts.
 """
 
 from collections.abc import Sequence
@@ -15,6 +15,7 @@ from ch12.model_client import (
     ToolChoice,
     ToolDefinition,
     Usage,
+    estimate_tokens,
 )
 
 
@@ -35,9 +36,23 @@ class Call(BaseModel):
 
 
 class FakeModelClient:
-    def __init__(self, script: Sequence[ScriptItem]) -> None:
+    provider_counts = False  # count_tokens is a local estimate, never a provider count
+
+    def __init__(self, script: Sequence[ScriptItem], chars_per_token: float = 4.0) -> None:
         self._script = list(script)
         self.calls: list[Call] = []
+        self.count_calls = 0
+        self.chars_per_token = chars_per_token
+
+    def count_tokens(
+        self,
+        system: str,
+        messages: Sequence[Message],
+        tools: Sequence[ToolDefinition] = (),
+        timeout: float | None = None,
+    ) -> int:
+        self.count_calls += 1
+        return estimate_tokens(system, messages, tools, self.chars_per_token)
 
     def complete(
         self,

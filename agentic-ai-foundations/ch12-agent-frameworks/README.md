@@ -18,17 +18,18 @@ inside the anthropic SDK the book already pins.
 
 ## What's here
 
-The folder stands alone: files marked "copied" come from Chapter 8's folder.
+The folder stands alone: files marked "copied" come from Chapter 11's folder.
 
 | File | What it shows |
 |---|---|
-| `ch12/annotated_agent.py` | Chapter 7's `run_agent` as Chapter 8 left it, unchanged, with `# framework:` comments naming the loop part of each block. |
-| `ch12/edges.py` | New. The checklist's edges on our loop, with Chapter 8's four read tools only: an unknown tool and a model that never ends its turn (fake model, real Kestrel tool calls). |
+| `ch12/annotated_agent.py` | Chapter 11's `run_agent` (Chapter 7's loop with Chapter 9's inspector hook), unchanged, with `# framework:` comments naming the loop part of each block. |
+| `ch12/edges.py` | New. The checklist's edges on our loop, with Chapter 11's read-only tools: an invented argument, an unknown tool and a model that never ends its turn (fake model, real Kestrel tool calls). |
 | `ch12/beta_tool_demo.py` | New. The schema `@beta_tool` builds in anthropic 2.8, and what a bad call does. Offline. |
 | `ch12/records.py` | New. Checks that every decision record answers the checklist's questions. |
 | `checklist.md` | New. The build-or-adopt checklist. |
 | `decisions/*.md` | New. Decision records for the three Kestrel requests and the capstone (`capstone.md` goes into the Chapter 14 spec). |
-| `ch12/registry.py`, `tools.py`, `returns.py`, `return_store.py`, `lookups.py`, `shaping.py`, `budget.py`, `model_client.py`, `anthropic_adapter.py`, `fake_model.py`, `settings.py`, `prompts.py`, `prompts/ops_agent_v2.md` | Copied from Chapter 8 unchanged (imports renamed). |
+| `ch12/registry.py`, `tools.py`, `model_client.py`, `anthropic_adapter.py`, `openai_compatible_adapter.py`, `fake_model.py`, `budget.py`, `inspector.py`, `context_budget.py`, `results.py`, `truncate.py`, `lookups.py`, `shaping.py`, `settings.py`, `prompts.py` | Copied from Chapter 11 unchanged (imports renamed). |
+| `ch12/prompts/ops_agent_v2.md` | Copied from Chapter 8: the operations prompt the edges demo uses. |
 | `tests/` | The loop's exits, errors as results, the edges demo against the seeded API, the records and the `@beta_tool` schema. |
 
 ## Run it
@@ -56,24 +57,27 @@ uv run python -m ch12.records
 
 ## Expected output
 
-`pytest` reports `12 passed`.
+`pytest` reports `13 passed`.
 
 `ch12.edges` scripts the model, so every model turn below is fake-model output; the tool
-results come from the Kestrel mock API. The clock is fixed, so times are the same each run.
+results come from the Kestrel mock API. The clock is fixed (0.2 s per read), so times are the same each run and mean nothing.
 
 ```text
-== unknown tool (fake model)
-step 1  tool_call 1x get_delivery_status     in=900    out=40    200 ms
-step 2  tool_call 1x track_parcel (1 ERR)    in=900    out=40    200 ms
-step 3  finished  -                          in=187    out=21    200 ms
-stopped: finished  steps 3/3  tokens 2088/20000  time 2.6/60 s
-tool result: is_error=True Unknown tool: track_parcel. Available tools: get_delivery_status, list_shipments, get_ticket, get_policy.
+== an invented argument, then an unknown tool (fake model)
+step 1  tool_call 1x get_delivery_status     in=900    out=40    400 ms
+step 2  tool_call 1x get_delivery_status (1 ERR) in=900    out=40    400 ms
+step 3  tool_call 1x track_parcel (1 ERR)    in=900    out=40    400 ms
+step 4  finished  -                          in=187    out=21    400 ms
+stopped: finished  steps 4/4  tokens 3028/20000  time 3.4/60 s
+tool result 2: is_error=True Invalid arguments for get_delivery_status. verbose: Extra inputs are not permitted; got True.
+tool result 3: is_error=True Unknown tool: track_parcel. Available tools: get_delivery_status, list_shipments, get_ticket, get_policy, get_stock.
 
 == a model that never ends its turn (fake model)
-step 1  tool_call 1x get_delivery_status     in=900    out=40    200 ms
-step 2  tool_call 1x get_delivery_status     in=900    out=40    200 ms
-step 3  tool_call 1x get_delivery_status     in=900    out=40    200 ms
-stopped: step_limit  steps 3/3  tokens 2820/20000  time 2.6/60 s
+step 1  tool_call 1x get_delivery_status     in=900    out=40    400 ms
+step 2  tool_call 1x get_delivery_status     in=900    out=40    400 ms
+step 3  tool_call 1x get_delivery_status     in=900    out=40    400 ms
+step 4  tool_call 1x get_delivery_status     in=900    out=40    400 ms
+stopped: step_limit  steps 4/4  tokens 3760/20000  time 3.4/60 s
 answer: ''  (partial result, labelled step_limit)
 ```
 

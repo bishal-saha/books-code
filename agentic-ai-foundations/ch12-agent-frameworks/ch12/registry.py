@@ -1,11 +1,13 @@
-"""Chapter 7's registry and dispatcher (tools.py there), with two changes for Chapter 8.
+"""Chapter 8's registry and dispatcher, with Chapter 9's rendering path and one change for 11.
 
-Change 1: a Tool can carry per-field recovery hints.
-Change 2: invalid arguments come back as one line per field: name, problem, value received, hint.
-Everything else is Chapter 7's: errors as results, the timeout branch, results wrapped as data.
+From Chapter 8: per-field recovery hints, and one line per invalid field.
+From Chapter 9: the registry takes the tool-result cap, and every successful output goes
+through render_tool_result (ch12/results.py) instead of Chapter 8's as_data().
+New in Chapter 11: arguments are validated strictly (extra="forbid"). Chapter 8 let pydantic
+ignore unknown fields, so a parameter the model invented was silently dropped; now it comes
+back as an error result the model can read and correct.
 """
 
-import json
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -15,9 +17,9 @@ import httpx
 from pydantic import BaseModel, ValidationError
 
 from ch12.model_client import ToolCall, ToolDefinition, ToolResult
+from ch12.results import render_tool_result
 
 logger = logging.getLogger(__name__)
-MAX_RESULT_CHARS = 8_000  # backstop; tools should keep their own output small first
 
 
 class ToolError(Exception):
@@ -31,14 +33,6 @@ class Tool:
     args_model: type[BaseModel]
     function: Callable[[Any], Any]  # takes the validated args only; bind the rest with partial
     hints: dict[str, str] = field(default_factory=dict)  # change 1: field name -> recovery hint
-
-
-def as_data(text: str) -> str:
-    """Chapter 4's rule for untrusted data: escape the tag characters, cap, delimit."""
-    text = text.replace("<", "&lt;").replace(">", "&gt;")
-    if len(text) > MAX_RESULT_CHARS:
-        text = text[:MAX_RESULT_CHARS] + " [truncated]"
-    return f"<data>{text}</data>"
 
 
 def _shown(value: object, limit: int = 60) -> str:
@@ -62,8 +56,9 @@ def validation_message(tool: str, exc: ValidationError, hints: dict[str, str]) -
 
 
 class ToolRegistry:
-    def __init__(self) -> None:
+    def __init__(self, max_result_chars: int) -> None:
         self._tools: dict[str, Tool] = {}
+        self.max_result_chars = max_result_chars  # Chapter 9: the enforced cap per result
 
     def register(self, tool: Tool) -> None:
         if tool.name in self._tools:
@@ -94,7 +89,8 @@ class ToolRegistry:
                 is_error=True,
             )
         try:
-            args = tool.args_model.model_validate(call.arguments)
+            # Chapter 11: unknown fields are errors, not silently dropped
+            args = tool.args_model.model_validate(call.arguments, extra="forbid")
         except ValidationError as exc:
             message = validation_message(tool.name, exc, tool.hints)
             return ToolResult(tool_call_id=call.id, content=message, is_error=True)
@@ -115,4 +111,7 @@ class ToolRegistry:
                 content=f"{tool.name} failed ({type(exc).__name__}).",
                 is_error=True,
             )
-        return ToolResult(tool_call_id=call.id, content=as_data(json.dumps(output, default=str)))
+        content, is_error = render_tool_result(
+            call.name, call.arguments, output, self.max_result_chars
+        )
+        return ToolResult(tool_call_id=call.id, content=content, is_error=is_error)

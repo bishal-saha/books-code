@@ -1,7 +1,10 @@
-"""The v2 operations tools: four reads and one write, each with a description that says
-when to use it and what to use instead, bounded inputs and shaped outputs."""
+"""Chapter 8's v2 operations tools, read-only, plus one stock lookup for the comparison.
 
-from datetime import date
+From Chapter 8: get_delivery_status, list_shipments, get_ticket and get_policy, unchanged.
+Left out: create_return_authorisation, because the harness runs every task several times and
+must never create records. New in Chapter 11: get_stock, written to the same conventions.
+"""
+
 from functools import partial
 from typing import Any, Literal
 
@@ -10,8 +13,6 @@ from pydantic import BaseModel, Field
 
 from ch12.lookups import fetch_policy_text, order_for_ticket
 from ch12.registry import Tool, ToolError, ToolRegistry
-from ch12.return_store import ReturnStore
-from ch12.returns import CREATE_RETURN_DESCRIPTION, CreateReturnArgs, create_return_authorisation
 from ch12.shaping import paginate, truncate
 
 # --- Input models: every Field description and constraint ends up in the schema the model reads
@@ -40,6 +41,10 @@ class GetTicketArgs(BaseModel):
     include_messages: bool = Field(
         default=False, description="true only when you need the customer's own words."
     )
+
+
+class GetStockArgs(BaseModel):  # new in Chapter 11
+    sku: str = Field(pattern=r"^SKU-\d{5}$", description="Product SKU, e.g. SKU-00042.")
 
 
 class GetPolicyArgs(BaseModel):
@@ -137,6 +142,14 @@ def get_policy(http: httpx.Client, args: GetPolicyArgs) -> dict[str, Any]:
     }
 
 
+def get_stock(http: httpx.Client, args: GetStockArgs) -> dict[str, Any]:  # new in Chapter 11
+    r = http.get(f"/stock/{args.sku}")
+    if r.status_code == 404:
+        raise ToolError(f"No product {args.sku}. SKUs look like SKU-00042.")
+    r.raise_for_status()
+    return r.json()
+
+
 # --- Descriptions: what it returns, when to use it, what to use instead, what the inputs mean
 
 DELIVERY_STATUS_DESCRIPTION = (
@@ -165,9 +178,15 @@ GET_POLICY_DESCRIPTION = (
 )
 
 
-def build_registry(http: httpx.Client, store: ReturnStore, today: date) -> ToolRegistry:
-    """The v2 tool set. http, store and today are bound here, so each function takes only args."""
-    registry = ToolRegistry()
+GET_STOCK_DESCRIPTION = (
+    "Returns on-hand stock for one SKU in each Kestrel warehouse. For several SKUs, call it "
+    "once per SKU; the calls are independent."
+)
+
+
+def build_registry(http: httpx.Client, max_result_chars: int = 16_000) -> ToolRegistry:
+    """The read-only tool set. http is bound here, so each function takes only args."""
+    registry = ToolRegistry(max_result_chars)
     for tool in [
         Tool(
             name="get_delivery_status",
@@ -195,10 +214,10 @@ def build_registry(http: httpx.Client, store: ReturnStore, today: date) -> ToolR
             function=partial(get_policy, http),
         ),
         Tool(
-            name="create_return_authorisation",
-            description=CREATE_RETURN_DESCRIPTION,
-            args_model=CreateReturnArgs,
-            function=partial(create_return_authorisation, store, http, today),
+            name="get_stock",
+            description=GET_STOCK_DESCRIPTION,
+            args_model=GetStockArgs,
+            function=partial(get_stock, http),
         ),
     ]:
         registry.register(tool)

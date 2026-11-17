@@ -1,10 +1,13 @@
-"""Chapter 6's provider-neutral model client, with one addition for the agent loop.
+"""Chapter 7's provider-neutral model client, with token counting added.
 
-New in Chapter 7: complete() takes an optional per-call `timeout` in seconds, so the loop can
-shrink a call to fit the time left in the run. None means the client-wide timeout, so every
-Chapter 6 call still works unchanged.
+From Chapter 7: complete() takes an optional per-call `timeout` in seconds.
+New in Chapter 9: count_tokens() and the `provider_counts` flag. An adapter whose provider has
+a token-count endpoint forwards to it (provider_counts = True); any other client returns
+estimate_tokens(), a local estimate from the character count (provider_counts = False).
 """
 
+import json
+import math
 from collections.abc import Sequence
 from typing import Any, Literal, Protocol
 
@@ -73,8 +76,41 @@ class ModelClient(Protocol):
         max_tokens: int,
         tools: Sequence[ToolDefinition] = (),
         tool_choice: ToolChoice | None = None,
-        timeout: float | None = None,  # new in Chapter 7: seconds for this call only
+        timeout: float | None = None,  # Chapter 7: seconds for this call only
     ) -> ModelResponse: ...
+
+    # New in Chapter 9
+    provider_counts: bool  # False when count_tokens is a local estimate
+
+    def count_tokens(
+        self,
+        system: str,
+        messages: Sequence[Message],
+        tools: Sequence[ToolDefinition] = (),
+        timeout: float | None = None,
+    ) -> int: ...
+
+
+def request_chars(
+    system: str, messages: Sequence[Message], tools: Sequence[ToolDefinition] = ()
+) -> int:
+    """Characters a request carries: system prompt, tool definitions, every message's content."""
+    total = len(system) + sum(len(json.dumps(t.model_dump())) for t in tools)
+    for m in messages:
+        total += len(m.content)
+        total += sum(len(c.name) + len(json.dumps(c.arguments)) for c in m.tool_calls)
+        total += sum(len(r.content) for r in m.tool_results)
+    return total
+
+
+def estimate_tokens(
+    system: str,
+    messages: Sequence[Message],
+    tools: Sequence[ToolDefinition] = (),
+    chars_per_token: float = 4.0,
+) -> int:
+    """A local estimate for clients without a count endpoint. Tune the ratio per provider."""
+    return math.ceil(request_chars(system, messages, tools) / chars_per_token)
 
 
 def assistant_message(response: ModelResponse) -> Message:

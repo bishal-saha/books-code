@@ -1,9 +1,12 @@
-"""Chapter 7's run_agent as Chapter 8 left it, annotated with what agent frameworks document.
+"""Chapter 11's run_agent, unchanged, annotated with what agent frameworks document.
 
-Only comments were added. Each `# framework:` comment names the loop part of the block
-beneath it and what the chapter's mapping table (sources dated November 2026) documents for it.
+This is the loop as the book stands after Chapter 11: Chapter 7's loop, Chapter 9's optional
+inspector hook, and the registry from registry.py (Chapter 9's rendering, Chapter 11's strict
+arguments). Only comments were added. Each `# framework:` comment names the loop part of the
+block beneath it and what the chapter's mapping table (sources dated November 2026) documents.
 """
 
+import logging
 import time
 from collections import Counter
 from collections.abc import Callable
@@ -12,17 +15,20 @@ from dataclasses import dataclass, field
 from pydantic import BaseModel
 
 from ch12.budget import BudgetTracker, CallLimits, RunBudget, StopCause
+from ch12.inspector import ContextInspector, ContextReport
 from ch12.model_client import (
     Message,
     ModelClient,
     ModelError,
     ModelResponse,
+    ToolDefinition,
     ToolResult,
     assistant_message,
     tool_results_message,
 )
 from ch12.registry import ToolRegistry
 
+logger = logging.getLogger(__name__)
 MIN_CALL_TOKENS = 256  # below this, a reply would be cut off almost at once
 MIN_CALL_SECONDS = 1.0  # below this, a model call cannot usefully finish
 PREVIEW_CHARS = 120
@@ -36,7 +42,7 @@ class ToolCallRecord(BaseModel):
 
 
 # framework: step log. Agent SDK hooks run at points of the loop; OpenAI Agents SDK
-# tracing is on by default. Ours is this record, one per model call.
+# tracing is on by default. Ours is this record: one per step, the model call and its tools.
 class StepRecord(BaseModel):
     index: int
     messages_sent: int  # the request: how many messages went out
@@ -47,6 +53,7 @@ class StepRecord(BaseModel):
     input_tokens: int
     output_tokens: int
     duration_ms: int  # model call plus tool calls
+    context: ContextReport | None = None  # new in Chapter 9: set when an inspector is on
 
 
 @dataclass
@@ -66,6 +73,7 @@ def step_record(
     response: ModelResponse,
     results: list[ToolResult],
     duration_s: float,
+    context: ContextReport | None = None,
 ) -> StepRecord:
     calls = [
         ToolCallRecord(
@@ -86,6 +94,7 @@ def step_record(
         input_tokens=response.usage.input_tokens,
         output_tokens=response.usage.output_tokens,
         duration_ms=round(duration_s * 1000),
+        context=context,
     )
 
 
@@ -97,6 +106,7 @@ def run_agent(
     budget: RunBudget,
     limits: CallLimits,
     clock: Callable[[], float] = time.monotonic,
+    inspector: ContextInspector | None = None,
 ) -> RunResult:
     # framework: state. A plain list in this process; nothing survives a restart.
     messages = [Message(role="user", content=user_message)]
@@ -112,11 +122,20 @@ def run_agent(
         cause = tracker.check(MIN_CALL_TOKENS, MIN_CALL_SECONDS)
         if cause is not None:
             break
+        started, context = clock(), None
+        # framework: context. The inspector counts the request first (count_tokens); it warns,
+        # it never stops a run, so it does not close the budget gap above.
+        if inspector is not None:  # the request about to go out; its time counts too
+            timeout = min(limits.timeout_seconds, tracker.remaining_seconds())
+            context = measure(inspector, system, tools, messages, timeout)
+            cause = tracker.check(MIN_CALL_TOKENS, MIN_CALL_SECONDS)  # measuring took time
+            if cause is not None:
+                break
         call_limits = CallLimits(  # shrink this call to what the run has left
             max_output_tokens=min(limits.max_output_tokens, tracker.remaining_tokens()),
             timeout_seconds=min(limits.timeout_seconds, tracker.remaining_seconds()),
         )
-        sent, started = len(messages), clock()
+        sent = len(messages)
         try:
             # framework: model client. The tool runner wraps this call and the dispatch below.
             response = client.complete(
@@ -135,12 +154,14 @@ def run_agent(
         results: list[ToolResult] = []
         if response.stop_reason == "tool_call" and response.tool_calls:
             # framework: tool errors. OpenAI Agents SDK raises for an unknown tool by default;
-            # dispatch() returns it as an error result, like any other tool failure.
+            # dispatch() returns it as an error result, like an invented argument (Chapter 11).
             results = [registry.dispatch(call) for call in response.tool_calls]
             messages.append(tool_results_message(results))  # all results, one message
-        steps.append(step_record(index, sent, call_limits, response, results, clock() - started))
+        steps.append(
+            step_record(index, sent, call_limits, response, results, clock() - started, context)
+        )
 
-        # framework: stop handling. Any step without tool calls ends the run with a named StopCause.
+        # framework: stop handling. Any step without tool calls ends the run with a StopCause.
         if not results:  # nothing to send back: this step ends the run
             final_text = response.text
             cause = stop_cause(response, call_limits, limits)
@@ -156,6 +177,21 @@ def run_agent(
         total_tokens=tracker.total_tokens,
         elapsed_seconds=tracker.elapsed(),
     )
+
+
+def measure(
+    inspector: ContextInspector,
+    system: str,
+    tools: list[ToolDefinition],
+    messages: list[Message],
+    timeout: float,
+) -> ContextReport | None:
+    """A failed count is logged and skipped: measuring must never end the run."""
+    try:
+        return inspector.inspect(system, tools, messages, timeout)
+    except ModelError as exc:
+        logger.warning("context inspection skipped: %s", exc)
+        return None
 
 
 def stop_cause(response: ModelResponse, used: CallLimits, configured: CallLimits) -> StopCause:

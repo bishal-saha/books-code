@@ -1,4 +1,4 @@
-"""The annotated loop still behaves like Chapter 8's: every exit, errors as results."""
+"""The annotated loop still behaves like Chapter 11's: every exit, errors as results."""
 
 from collections.abc import Sequence
 
@@ -26,7 +26,7 @@ def lookup(args: OrderArgs) -> dict:
 
 @pytest.fixture
 def registry() -> ToolRegistry:
-    r = ToolRegistry()
+    r = ToolRegistry(max_result_chars=2_000)
     r.register(Tool("get_order", "Get one order.", OrderArgs, lookup))
     return r
 
@@ -78,3 +78,17 @@ def test_unknown_tools_and_tool_errors_come_back_as_results(registry, name, orde
 def test_a_failed_model_call_is_a_stop_cause(registry):
     result, _ = run([ModelError("timeout", "timed out")], registry)
     assert result.cause is StopCause.MODEL_ERROR
+
+
+def test_an_invented_argument_is_an_error_result(registry):
+    call = ToolCall(id="call_1", name="get_order", arguments={"order_id": "O-1", "verbose": True})
+    turn = ModelResponse(
+        text="",
+        stop_reason="tool_call",
+        usage=Usage(input_tokens=10, output_tokens=2),
+        tool_calls=[call],
+    )
+    result, _ = run([turn, "Done."], registry)
+    assert result.cause is StopCause.FINISHED
+    error = result.messages[2].tool_results[0]
+    assert error.is_error and "verbose: Extra inputs are not permitted" in error.content

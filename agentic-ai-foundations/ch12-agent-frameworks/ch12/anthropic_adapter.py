@@ -1,7 +1,8 @@
-"""Chapter 6's Anthropic adapter, with a per-call timeout for the agent loop.
+"""Chapter 9's Anthropic adapter, copied unchanged apart from one startup check.
 
-Still the only file that imports the SDK. New in Chapter 7: complete() passes an optional
-`timeout` to messages.create, which overrides the client-wide timeout for that request only.
+Still the only file that imports the SDK. From Chapter 7: complete() passes an optional
+`timeout` to messages.create. New in Chapter 9: count_tokens() forwards the same request shape
+to the provider's token-count endpoint (messages.count_tokens), with the same model ID.
 """
 
 from collections.abc import Sequence
@@ -74,10 +75,13 @@ def to_sdk_message(m: Message) -> MessageParam:
 
 
 class AnthropicAdapter:
+    provider_counts = True  # count_tokens asks the provider, not a local estimate
+
     def __init__(
         self, settings: Settings, http_client: anthropic.DefaultHttpxClient | None = None
     ) -> None:
-        assert settings.api_key is not None
+        if settings.api_key is None or not settings.model:  # Chapter 11: MODEL is optional now
+            raise ValueError("the Anthropic adapter needs a model and an API key")
         self._model = settings.model
         self._client = anthropic.Anthropic(
             api_key=settings.api_key.get_secret_value(),  # the one place the key is unwrapped
@@ -126,6 +130,30 @@ class AnthropicAdapter:
             ],
             request_id=response._request_id,
         )
+
+    def count_tokens(
+        self,
+        system: str,
+        messages: Sequence[Message],
+        tools: Sequence[ToolDefinition] = (),
+        timeout: float | None = None,
+    ) -> int:
+        extra = {}
+        if system:  # the inspector counts once with no system prompt at all
+            extra["system"] = system
+        if tools:
+            extra["tools"] = [to_sdk_tool(t) for t in tools]
+        if timeout is not None:
+            extra["timeout"] = timeout
+        try:
+            count = self._client.messages.count_tokens(
+                model=self._model,  # counts are model-specific: same model as inference
+                messages=[to_sdk_message(m) for m in messages],
+                **extra,
+            )
+        except anthropic.APIError as exc:
+            raise _to_model_error(exc) from exc
+        return count.input_tokens
 
 
 def _to_model_error(exc: anthropic.APIError) -> ModelError:
