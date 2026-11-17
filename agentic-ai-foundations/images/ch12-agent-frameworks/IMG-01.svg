@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900" role="img" aria-labelledby="t d">
+<title id="t">How much of your agent loop each framework shape takes over</title>
+<desc id="d">A grid with the five parts of the agent loop as columns: model client, tool dispatch, conversation state, run budget and step log. Row one, loop helper (the Anthropic SDK tool runner): it runs the model client and tool dispatch; state and the step log stay in your code; the cited docs do not settle a budget. Row two, standalone library (OpenAI Agents SDK, Pydantic AI, LangGraph): it runs the client, dispatch and state through its own abstractions; the cited docs do not settle budget and step log for every library, so check each one. Row three, runtime (Claude Agent SDK with its bundled CLI): it runs the client, tools and state; the cited docs do not settle the budget; for the step log it runs hooks that call your code.</desc>
+<rect width="1600" height="900" rx="24" fill="#0B1530"/>
+<g font-family="Inter, 'Segoe UI', system-ui, sans-serif" fill="#CBD5E1">
+<text x="70" y="80" font-size="40" font-weight="600">How much of your loop each shape takes over</text>
+<text x="70" y="124" font-size="24" fill="#94A3B8">From the cited docs, November 2026. Further down, more of the loop is the framework's.</text>
+<text x="536.0" y="180" font-size="22" font-weight="600" text-anchor="middle">Model client</text>
+<text x="760.0" y="180" font-size="22" font-weight="600" text-anchor="middle">Tool dispatch</text>
+<text x="984.0" y="180" font-size="22" font-weight="600" text-anchor="middle">Conversation state</text>
+<text x="1208.0" y="180" font-size="22" font-weight="600" text-anchor="middle">Run budget</text>
+<text x="1432.0" y="180" font-size="22" font-weight="600" text-anchor="middle">Step log</text>
+<text x="70" y="272" font-size="30" font-weight="600" fill="#E2E8F0">Loop helper</text>
+<text x="70" y="306" font-size="20" fill="#94A3B8">Anthropic SDK tool runner</text>
+<rect x="430" y="210" width="212" height="140" rx="16" fill="#134E4A" stroke="#14B8A6" stroke-width="3"/>
+<text x="536.0" y="272" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">it runs</text>
+<text x="536.0" y="304" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">this part</text>
+<rect x="654" y="210" width="212" height="140" rx="16" fill="#134E4A" stroke="#14B8A6" stroke-width="3"/>
+<text x="760.0" y="272" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">it runs</text>
+<text x="760.0" y="304" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">this part</text>
+<rect x="878" y="210" width="212" height="140" rx="16" fill="#111C3A" stroke="#6366F1" stroke-width="3"/>
+<text x="984.0" y="272" font-size="24" font-weight="600" text-anchor="middle" fill="#C7D2FE">stays in</text>
+<text x="984.0" y="304" font-size="24" font-weight="600" text-anchor="middle" fill="#C7D2FE">your code</text>
+<rect x="1102" y="210" width="212" height="140" rx="16" fill="#3B2A0B" stroke="#F59E0B" stroke-width="3" stroke-dasharray="10 7"/>
+<text x="1208.0" y="272" font-size="24" font-weight="600" text-anchor="middle" fill="#FDE68A">not settled:</text>
+<text x="1208.0" y="304" font-size="24" font-weight="600" text-anchor="middle" fill="#FDE68A">check its docs</text>
+<rect x="1326" y="210" width="212" height="140" rx="16" fill="#111C3A" stroke="#6366F1" stroke-width="3"/>
+<text x="1432.0" y="272" font-size="24" font-weight="600" text-anchor="middle" fill="#C7D2FE">stays in</text>
+<text x="1432.0" y="304" font-size="24" font-weight="600" text-anchor="middle" fill="#C7D2FE">your code</text>
+<text x="70" y="442" font-size="30" font-weight="600" fill="#E2E8F0">Standalone library</text>
+<text x="70" y="476" font-size="20" fill="#94A3B8">OpenAI Agents SDK,</text>
+<text x="70" y="502" font-size="20" fill="#94A3B8">Pydantic AI, LangGraph</text>
+<rect x="430" y="380" width="212" height="140" rx="16" fill="#134E4A" stroke="#14B8A6" stroke-width="3"/>
+<text x="536.0" y="442" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">it runs</text>
+<text x="536.0" y="474" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">this part</text>
+<rect x="654" y="380" width="212" height="140" rx="16" fill="#134E4A" stroke="#14B8A6" stroke-width="3"/>
+<text x="760.0" y="442" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">it runs</text>
+<text x="760.0" y="474" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">this part</text>
+<rect x="878" y="380" width="212" height="140" rx="16" fill="#134E4A" stroke="#14B8A6" stroke-width="3"/>
+<text x="984.0" y="442" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">it runs</text>
+<text x="984.0" y="474" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">this part</text>
+<rect x="1102" y="380" width="212" height="140" rx="16" fill="#3B2A0B" stroke="#F59E0B" stroke-width="3" stroke-dasharray="10 7"/>
+<text x="1208.0" y="442" font-size="24" font-weight="600" text-anchor="middle" fill="#FDE68A">not settled:</text>
+<text x="1208.0" y="474" font-size="24" font-weight="600" text-anchor="middle" fill="#FDE68A">check its docs</text>
+<rect x="1326" y="380" width="212" height="140" rx="16" fill="#3B2A0B" stroke="#F59E0B" stroke-width="3" stroke-dasharray="10 7"/>
+<text x="1432.0" y="442" font-size="24" font-weight="600" text-anchor="middle" fill="#FDE68A">not settled:</text>
+<text x="1432.0" y="474" font-size="24" font-weight="600" text-anchor="middle" fill="#FDE68A">check its docs</text>
+<text x="70" y="612" font-size="30" font-weight="600" fill="#E2E8F0">Runtime</text>
+<text x="70" y="646" font-size="20" fill="#94A3B8">Claude Agent SDK</text>
+<text x="70" y="672" font-size="20" fill="#94A3B8">(bundled CLI)</text>
+<rect x="430" y="550" width="212" height="140" rx="16" fill="#134E4A" stroke="#14B8A6" stroke-width="3"/>
+<text x="536.0" y="612" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">it runs</text>
+<text x="536.0" y="644" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">this part</text>
+<rect x="654" y="550" width="212" height="140" rx="16" fill="#134E4A" stroke="#14B8A6" stroke-width="3"/>
+<text x="760.0" y="612" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">it runs</text>
+<text x="760.0" y="644" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">this part</text>
+<rect x="878" y="550" width="212" height="140" rx="16" fill="#134E4A" stroke="#14B8A6" stroke-width="3"/>
+<text x="984.0" y="612" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">it runs</text>
+<text x="984.0" y="644" font-size="24" font-weight="600" text-anchor="middle" fill="#CCFBF1">this part</text>
+<rect x="1102" y="550" width="212" height="140" rx="16" fill="#3B2A0B" stroke="#F59E0B" stroke-width="3" stroke-dasharray="10 7"/>
+<text x="1208.0" y="612" font-size="24" font-weight="600" text-anchor="middle" fill="#FDE68A">not settled:</text>
+<text x="1208.0" y="644" font-size="24" font-weight="600" text-anchor="middle" fill="#FDE68A">check its docs</text>
+<rect x="1326" y="550" width="212" height="140" rx="16" fill="#3B2A0B" stroke="#F59E0B" stroke-width="3" stroke-dasharray="10 7"/>
+<text x="1432.0" y="612" font-size="24" font-weight="600" text-anchor="middle" fill="#FDE68A">it runs,</text>
+<text x="1432.0" y="644" font-size="24" font-weight="600" text-anchor="middle" fill="#FDE68A">you hook in</text>
+<text x="70" y="790" font-size="22" fill="#94A3B8">Whatever the shape, the checklist asks the same questions about the parts it takes over: limits, errors, visibility and reach.</text>
+</g></svg>
