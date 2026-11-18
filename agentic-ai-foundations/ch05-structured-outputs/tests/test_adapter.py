@@ -45,6 +45,12 @@ def test_prompt_only_requests_carry_no_output_config() -> None:
     assert "output_config" not in sent
 
 
+def test_thinking_is_disabled_by_default() -> None:
+    sent, _ = send(None, "end_turn", VALID_JSON)
+    assert SETTINGS.thinking == "off"
+    assert sent["thinking"] == {"type": "disabled"}
+
+
 def test_native_requests_carry_the_transformed_schema() -> None:
     sent, stop_reason = send(ExpenseClaim, "end_turn", VALID_JSON)
     fmt = sent["output_config"]["format"]
@@ -73,3 +79,9 @@ def test_why_the_adapter_does_not_use_parse() -> None:
             model="test-model", max_tokens=400, messages=[{"role": "user", "content": "hi"}],
             output_format=ExpenseClaim,
         )  # fmt: skip
+
+
+def test_the_timeout_keeps_a_short_connect_limit() -> None:
+    timeout = AnthropicAdapter(SETTINGS)._client.timeout
+    assert isinstance(timeout, httpx2.Timeout)
+    assert (timeout.connect, timeout.read) == (5.0, SETTINGS.timeout_seconds)

@@ -32,8 +32,10 @@ def needs_tools(response: ModelResponse) -> bool:
     match response.stop_reason:
         case "finished":
             return False
-        case "tool_call":
+        case "tool_call" if response.tool_calls:
             return True
+        case "tool_call":  # a tool stop with nothing to run: no result could answer it
+            raise RuntimeError("Stop reason tool_call, but the response has no tool calls.")
         case "truncated":
             raise RuntimeError("Output was cut off; not running a possibly partial tool call.")
         case other:

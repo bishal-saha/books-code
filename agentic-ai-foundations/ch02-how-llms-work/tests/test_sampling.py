@@ -12,7 +12,7 @@ def test_counts_variants_and_truncation_and_bills_every_run(settings, fake_clien
     assert report.truncated == 1  # stopped at max_tokens: not a variant
     assert report.distinct == 2  # two wordings of the same fact
     assert all("30 days" in answer for answer in report.answers)
-    assert report.cost.output_tokens == 16 + 20 + 16 + 8 + 16  # truncated run billed too
+    assert report.cost.output_tokens == 16 + 20 + 16 + 256 + 16  # truncated run billed too
     assert report.cost.input_tokens == 5 * 180
 
 

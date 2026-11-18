@@ -3,6 +3,7 @@
 import os
 from collections.abc import Mapping
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel, Field, SecretStr
 
@@ -16,6 +17,7 @@ ENV_VARS = {  # environment variable -> Settings field
     "MAX_OUTPUT_TOKENS": "max_output_tokens",
     "MODEL_TIMEOUT_S": "timeout_seconds",
     "MAX_RETRIES": "max_retries",
+    "MODEL_THINKING": "thinking",
     "KESTREL_URL": "kestrel_url",
 }
 
@@ -28,6 +30,7 @@ class Settings(BaseModel):
     max_output_tokens: int = Field(default=400, gt=0)
     timeout_seconds: float = Field(default=30.0, gt=0)
     max_retries: int = Field(default=2, ge=0)  # the SDK's transport retries (Chapter 3)
+    thinking: Literal["off", "adaptive"] = "off"  # off: the adapter disables thinking
     kestrel_url: str = DEFAULT_KESTREL_URL
 
     @classmethod

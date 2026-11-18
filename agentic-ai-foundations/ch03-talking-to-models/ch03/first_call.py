@@ -15,6 +15,8 @@ response = client.messages.create(
     max_tokens=settings.max_output_tokens,
     system=SYSTEM_PROMPT,  # a parameter, not a message
     messages=[{"role": "user", "content": build_user_text(ticket)}],
+    # Thinking off unless MODEL_THINKING=adaptive, as in the adapter (see its section).
+    thinking={"type": "disabled"} if settings.thinking == "off" else anthropic.omit,
 )
 print(response.content)  # a list of blocks, not a string
 print(response.stop_reason)  # why generation ended

@@ -22,6 +22,8 @@ from ch06.model_client import (
 )
 from ch06.settings import Settings
 
+CONNECT_TIMEOUT_S = 5.0  # the SDK's own connect default; an unreachable host fails fast
+
 _STOP_REASONS: dict[str, StopReason] = {
     "end_turn": "finished",
     "stop_sequence": "finished",
@@ -82,9 +84,14 @@ class AnthropicAdapter:
         self._model = settings.model
         self._client = anthropic.Anthropic(
             api_key=settings.api_key.get_secret_value(),  # the one place the key is unwrapped
-            timeout=settings.timeout_seconds,
+            timeout=anthropic.Timeout(settings.timeout_seconds, connect=CONNECT_TIMEOUT_S),
             max_retries=settings.max_retries,
             http_client=http_client,  # None in real use; tests pass a fake transport
+        )
+        # Thinking tokens count against max_tokens, and the neutral types carry no
+        # thinking blocks, so thinking is off unless MODEL_THINKING=adaptive.
+        self._thinking: dict = (
+            {"thinking": {"type": "disabled"}} if settings.thinking == "off" else {}
         )
 
     def complete(
@@ -95,7 +102,7 @@ class AnthropicAdapter:
         tools: Sequence[ToolDefinition] = (),
         tool_choice: ToolChoice | None = None,
     ) -> ModelResponse:
-        extra = {}
+        extra = dict(self._thinking)
         if tools:  # without tools the request is exactly Chapter 3's
             extra["tools"] = [to_sdk_tool(t) for t in tools]
             extra["tool_choice"] = to_sdk_tool_choice(tool_choice or ToolChoice())

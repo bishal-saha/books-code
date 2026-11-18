@@ -46,7 +46,7 @@ class SearchResult(BaseModel):
 
 
 class SearchBackend(Protocol):
-    """Whatever search service Chapter 15 picks, behind one method. Tests use a fake."""
+    """Whatever search service you plug in, behind one method. Tests use a fake."""
 
     def search(self, query: str, max_results: int, timeout_s: float) -> list[SearchResult]: ...
 
@@ -130,7 +130,7 @@ def count_rows(args: CountRowsArgs, root: Path) -> CountRowsResult:
 
 class CalculateArgs(StrictArgs):
     expression: str = Field(
-        min_length=1, max_length=MAX_EXPRESSION_CHARS, description="e.g. (139 - 93) / 93 * 100"
+        min_length=1, max_length=MAX_EXPRESSION_CHARS, description="e.g. (120 - 80) / 80 * 100"
     )
 
 

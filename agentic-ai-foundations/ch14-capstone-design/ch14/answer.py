@@ -3,13 +3,15 @@
 from pathlib import PurePosixPath
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 NEEDS_INFO = "NEEDS INFO"  # Chapter 4's don't-know marker
 REFUSAL_MAX_CHARS = 300  # one or two sentences saying what is missing
 
 
 class Citation(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     kind: Literal["url", "file"]
     location: str = Field(
         description="A URL search_web returned, or a file path read_file or count_rows returned"
@@ -28,11 +30,15 @@ class Citation(BaseModel):
 
 
 class Claim(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     text: str = Field(description="One factual statement")
     citations: list[int] = Field(min_length=1, description="Indexes into FinalAnswer.citations")
 
 
 class FinalAnswer(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     status: Literal["answered", "needs_info"]
     answer: str = Field(description="A short summary of the claims; adds no new facts")
     claims: list[Claim] = Field(default_factory=list)

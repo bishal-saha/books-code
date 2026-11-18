@@ -62,3 +62,42 @@ def test_show_request_prints_the_delimited_message(kestrel_url, monkeypatch, cap
     assert out.startswith("<ticket>\n<ticket_id>T-000007</ticket_id>")
     assert "<order>none</order>\n<shipment>none</shipment>" in out
     assert main(["T-999999"]) == 1
+
+
+def test_needs_info_rejects_near_misses():
+    assert not needs_info("Notes for reviewer: none; NEEDS INFO: no order ID")
+    assert not needs_info("NEEDS INFO: no order ID")  # the label is part of the marker
+
+
+def test_other_stop_reasons_are_flagged():
+    from ch04.compare import flags
+    from ch04.prompt_builder import Draft
+
+    draft = Draft(ticket_id="T-1", prompt_version=2, text=V2_DRAFT, stop_reason="other",
+                  input_tokens=1, output_tokens=1)  # fmt: skip
+    assert flags(draft) == ["STOPPED (other)"]
+
+
+def test_fake_demo_run_shows_different_flags(kestrel_url):
+    from ch04.demo_drafts import DemoModelClient
+
+    prompts = (load_prompt("support_reply", 1), load_prompt("support_reply", 2))
+    entries = [("T-000007", "missing order"), ("T-000407", "late delivery"),
+               (FIXTURE, "local fixture")]  # fmt: skip
+    with httpx.Client(base_url=kestrel_url, timeout=5.0) as http:
+        rows = compare(DemoModelClient(prompts), http, prompts, entries, max_tokens=400)
+    text = report(rows, prompts, "fake", 400)
+    assert "| T-000007 | missing order | 16 words · no flags | 34 words · NEEDS INFO |" in text
+    assert "| T-LOCAL-1 | local fixture |" in text
+
+
+def test_copied_example_is_flagged():
+    from ch04.compare import flags
+    from ch04.prompt_builder import Draft
+
+    copied = (
+        "Subject: Checking stock for you\nReply:\nAbout T-EXAMPLE-1...\nNotes for reviewer: none"
+    )
+    draft = Draft(ticket_id="T-000145", prompt_version=2, text=copied, stop_reason="finished",
+                  input_tokens=1, output_tokens=1)  # fmt: skip
+    assert flags(draft) == ["COPIED EXAMPLE"]

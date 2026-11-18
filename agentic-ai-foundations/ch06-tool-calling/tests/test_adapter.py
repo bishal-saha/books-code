@@ -106,6 +106,29 @@ def test_the_follow_up_request_on_the_wire():
     }
 
 
+def test_thinking_is_disabled_unless_adaptive():
+    sent = []
+
+    def handler(request):
+        sent.append(json.loads(request.content))
+        return httpx2.Response(200, json=TOOL_USE_RESPONSE)
+
+    adapter_for(handler).complete("sys", [Message(role="user", content="q")], 50, [TOOL])
+    adaptive = SETTINGS.model_copy(update={"thinking": "adaptive"})
+    http = anthropic.DefaultHttpxClient(transport=httpx2.MockTransport(handler))
+    AnthropicAdapter(adaptive, http_client=http).complete(
+        "sys", [Message(role="user", content="q")], 50, [TOOL]
+    )
+    assert sent[0]["thinking"] == {"type": "disabled"}
+    assert "thinking" not in sent[1]
+
+
+def test_the_timeout_keeps_a_short_connect_limit():
+    timeout = AnthropicAdapter(SETTINGS)._client.timeout
+    assert isinstance(timeout, httpx2.Timeout)
+    assert (timeout.connect, timeout.read) == (5.0, SETTINGS.timeout_seconds)
+
+
 def test_no_tools_means_chapter_3s_request():
     sent: dict = {}
 
@@ -135,6 +158,19 @@ def test_no_tools_means_chapter_3s_request():
 )
 def test_tool_choice_mapping(choice, expected):
     assert to_sdk_tool_choice(choice) == expected
+
+
+def test_only_the_none_type_lacks_the_parallel_flag():
+    from anthropic.types import (
+        ToolChoiceAnyParam,
+        ToolChoiceAutoParam,
+        ToolChoiceNoneParam,
+        ToolChoiceToolParam,
+    )
+
+    for param in (ToolChoiceAutoParam, ToolChoiceAnyParam, ToolChoiceToolParam):
+        assert "disable_parallel_tool_use" in param.__annotations__
+    assert "disable_parallel_tool_use" not in ToolChoiceNoneParam.__annotations__
 
 
 def test_forced_tool_without_a_name_is_a_programming_error():

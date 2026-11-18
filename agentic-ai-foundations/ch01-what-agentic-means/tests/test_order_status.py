@@ -14,6 +14,7 @@ from ch01.order_status import (
     get_order_status,
     main,
 )
+from pydantic import ValidationError
 
 TICKET = {"ticket_id": "T-1", "order_id": "O-1"}
 ORDER = {"order_id": "O-1", "channel": "store"}
@@ -78,6 +79,20 @@ def test_server_error_is_upstream_unavailable() -> None:
     )
     with pytest.raises(UpstreamUnavailable):
         get_order_status(client, "T-1", date(2025, 12, 16))
+
+
+def test_api_mismatch_is_a_validation_error() -> None:
+    routes = routes_with("in_transit")
+    routes["/orders/O-1/shipment"] = {"carrier": "Swiftway Parcel", "status": "returned"}
+    with pytest.raises(ValidationError):
+        get_order_status(fake_client(routes), "T-1", date(2025, 12, 16))
+
+
+def test_undeclared_fields_are_ignored() -> None:
+    routes = routes_with("delivered")
+    routes["/orders/O-1"] = {**ORDER, "total": 129.0, "currency": "USD"}
+    result = get_order_status(fake_client(routes), "T-1", date(2025, 12, 16))
+    assert result.verdict is Verdict.DELIVERED
 
 
 def test_seeded_ticket_end_to_end(kestrel_url: str) -> None:

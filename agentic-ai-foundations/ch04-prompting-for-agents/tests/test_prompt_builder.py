@@ -6,17 +6,17 @@ from ch04.prompt_builder import TicketData, build_messages, load_prompt, render_
 SECTIONS = [
     "## Role",
     "## Task",
-    "## Data",
     "## Constraints",
+    "## Data",
     "## Output format",
     "## When you don't know",
 ]
 
 
-def test_v2_has_every_section():
+def test_v2_has_every_section_in_order():
     system = load_prompt("support_reply", 2).body
-    for heading in SECTIONS:
-        assert heading in system
+    positions = [system.index(heading) for heading in SECTIONS]  # ValueError if one is missing
+    assert positions == sorted(positions)
 
 
 def test_header_is_parsed_and_checked():
@@ -64,3 +64,8 @@ def test_wrong_version_in_file_is_rejected(tmp_path, monkeypatch):
     monkeypatch.setattr(pb, "PROMPTS_DIR", tmp_path)
     with pytest.raises(ValueError, match="declares version 2"):
         load_prompt("x", 3)
+
+
+def test_system_prompt_sizes_quoted_in_the_chapter():
+    words = {v: len(load_prompt("support_reply", v).body.split()) for v in (1, 2)}
+    assert words == {1: 25, 2: 492}

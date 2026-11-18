@@ -28,7 +28,7 @@ def resolve_in_sandbox(root: Path, requested: str) -> Path:
         )
     try:
         resolved = (root / requested).resolve()  # follows symlinks and collapses '..'
-    except (OSError, ValueError) as exc:  # e.g. a NUL byte in the path
+    except (OSError, RuntimeError, ValueError) as exc:  # a NUL byte; a symlink loop on 3.12
         raise SandboxError(f"Path rejected: {requested!r} is not a valid file name.") from exc
     if not resolved.is_relative_to(root):  # compares path parts, not string prefixes
         raise SandboxError(

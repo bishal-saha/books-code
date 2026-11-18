@@ -45,7 +45,7 @@ class ModelClient(Protocol):
 def build_client(settings: Settings) -> ModelClient:
     """The only place that picks an adapter; the SDK is imported only when it is needed."""
     if settings.api_key is None or not settings.model:
-        raise SystemExit("set ANTHROPIC_API_KEY and MODEL (see the book's .env.example)")
+        raise SystemExit("set ANTHROPIC_API_KEY and MODEL (see .env.example)")
     from ch04.anthropic_adapter import AnthropicAdapter
 
     return AnthropicAdapter(settings)

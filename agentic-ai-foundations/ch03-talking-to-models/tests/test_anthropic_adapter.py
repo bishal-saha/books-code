@@ -79,10 +79,24 @@ def test_the_request_carries_system_messages_and_cap():
     assert sent["messages"] == [{"role": "user", "content": "Where is my order?"}]
 
 
+def test_thinking_is_disabled_unless_adaptive():
+    sent = []
+
+    def handler(request):
+        sent.append(json.loads(request.content))
+        return httpx2.Response(200, json=message_json("end_turn"))
+
+    adapter_for(handler).complete("sys", MESSAGES, 50)
+    adaptive = SETTINGS.model_copy(update={"thinking": "adaptive"})
+    adapter_for(handler, adaptive).complete("sys", MESSAGES, 50)
+    assert sent[0]["thinking"] == {"type": "disabled"}
+    assert "thinking" not in sent[1]
+
+
 @pytest.mark.parametrize(
     "status, kind",
     [(401, "auth"), (403, "auth"), (429, "rate_limited"), (400, "bad_request"),
-     (500, "provider_error")],
+     (404, "bad_request"), (500, "provider_error")],
 )  # fmt: skip
 def test_status_errors_become_model_errors(status, kind):
     def handler(request):
@@ -92,6 +106,11 @@ def test_status_errors_become_model_errors(status, kind):
     with pytest.raises(ModelError) as info:
         adapter_for(handler).complete("sys", MESSAGES, 50)
     assert (info.value.kind, info.value.request_id) == (kind, "req_err")
+
+
+def test_the_timeout_keeps_a_short_connect_limit():
+    timeout = adapter_for(lambda request: None)._client.timeout
+    assert (timeout.connect, timeout.read) == (5.0, SETTINGS.timeout_seconds)
 
 
 def test_a_timeout_is_a_timeout_not_a_connection_error():
@@ -152,3 +171,37 @@ def test_stream_yields_text_then_one_final_response():
     assert isinstance(final, ModelResponse)
     assert (final.text, final.stop_reason, final.request_id) == ("Hi Maya", "truncated", "req_s")
     assert final.usage.output_tokens == 2
+
+
+class CutStream(httpx2.SyncByteStream):
+    """A streamed body that sends some text, then fails with the given transport error."""
+
+    def __init__(self, head: bytes, error: Exception) -> None:
+        self.head, self.error = head, error
+
+    def __iter__(self):
+        yield self.head
+        raise self.error
+
+
+@pytest.mark.parametrize(
+    "error, kind",
+    [(httpx2.ReadError("dropped"), "provider_error"), (httpx2.ReadTimeout("stalled"), "timeout")],
+)
+def test_a_stream_that_fails_partway_is_a_model_error(error, kind):
+    start = message_json("end_turn") | {"content": [], "stop_reason": None}
+    head = sse(
+        {"type": "message_start", "message": start},
+        {"type": "content_block_start", "index": 0, "content_block": {"type": "text", "text": ""}},
+        text_delta("Hi "),
+    )
+
+    def handler(request):
+        headers = {"content-type": "text/event-stream"}
+        return httpx2.Response(200, stream=CutStream(head, error), headers=headers)
+
+    items = []
+    with pytest.raises(ModelError) as info:
+        for item in adapter_for(handler).stream("sys", MESSAGES, 50):
+            items.append(item)
+    assert (items, info.value.kind) == (["Hi "], kind)

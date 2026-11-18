@@ -7,6 +7,7 @@ SEEDED_PATHS = [
     "/orders/O-0006066/shipment",
     "/stock/SKU-00061",
     "/policies/shipping-policy",
+    "/policies/returns-policy",
 ]
 
 

@@ -18,7 +18,7 @@
 ```bash
 cd books-code/agentic-ai-foundations/ch14-capstone-design
 uv run kestrel up --no-serve                         # writes .kestrel/ (exports, docs, database)
-uv run pytest                                        # 44 tests
+uv run pytest                                        # 46 tests
 uv run python -m ch14.design_check --today 2026-01-15
 ```
 
@@ -30,14 +30,14 @@ Expected output of `design_check` (token figures are local estimates: characters
    last quarter (2025-10-01 to 2026-01-01, by shipped_at): 4,421 rows, 633,018 chars
    = 106 read_file pages of 6,000 chars
 2. Fixed part of every call (local estimate)
-   system prompt: 3,997 chars, tool definitions: 4,038 chars
-   = about 2,009 tokens per call
+   system prompt: 4,097 chars, tool definitions: 4,038 chars
+   = about 2,034 tokens per call
    5 search results at their caps: 5,205 chars (fits under 16,000)
    10 search results at their caps: 10,410 chars (fits under 16,000)
 3. Carrier question walk-through (assumes 500 output tokens per step)
-   happy path: 3 steps, 10,227 in + 1,500 out = 11,727
-   with a retry: 4 steps, 16,463 in + 2,000 out = 18,463
-   with a page read, an error and a retry: 6 steps, 32,781 in + 3,000 out = 35,781
+   happy path: 3 steps, 10,302 in + 1,500 out = 11,802
+   with a retry: 4 steps, 16,563 in + 2,000 out = 18,563
+   with a page read, an error and a retry: 6 steps, 32,931 in + 3,000 out = 35,931
    budget: 8 steps, 60,000 tokens
 4. Money for the worse run
    needs a priced 'hosted-sdk' in models.toml and SEARCH_USD_PER_QUERY

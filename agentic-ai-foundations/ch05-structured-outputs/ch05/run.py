@@ -17,7 +17,7 @@ import httpx
 from ch05.claims import extract_claim, load_claims
 from ch05.extract import Attempt, Extraction, ExtractionFailed
 from ch05.fake_model import FakeModelClient
-from ch05.model_client import ModelClient
+from ch05.model_client import ModelError, build_client
 from ch05.models import ExpenseClaim
 from ch05.policy import PolicyFlag, check_claim, fetch_policy
 from ch05.settings import Settings
@@ -37,14 +37,6 @@ class Row:
 def demo_client() -> FakeModelClient:
     replies: dict[str, list[str]] = json.loads(DEMO_REPLIES.read_text(encoding="utf-8"))
     return FakeModelClient([reply for claim_id, _ in load_claims() for reply in replies[claim_id]])
-
-
-def real_client(settings: Settings, native: bool) -> ModelClient:
-    if settings.api_key is None:
-        raise SystemExit("error: set ANTHROPIC_API_KEY in .env, or run with --demo")
-    from ch05.anthropic_adapter import AnthropicAdapter  # the SDK is imported only here
-
-    return AnthropicAdapter(settings, output_format=ExpenseClaim if native else None)
 
 
 def print_report(rows: list[Row], failures: list[tuple[str, ExtractionFailed]]) -> None:
@@ -70,7 +62,8 @@ def main() -> None:
     args = parser.parse_args()
 
     settings = Settings.from_env({**DEMO_ENV, **os.environ} if args.demo else os.environ)
-    client = demo_client() if args.demo else real_client(settings, args.native)
+    output_format = ExpenseClaim if args.native else None  # the native path
+    client = demo_client() if args.demo else build_client(settings, output_format)
     with httpx.Client(base_url=settings.kestrel_url, timeout=5.0) as http:
         rules = fetch_policy(http)  # GET /policies/expense-policy
 
@@ -85,6 +78,9 @@ def main() -> None:
         except ExtractionFailed as exc:  # a bad claim goes on the list; the batch carries on
             failures.append((claim_id, exc))
             continue
+        except ModelError as exc:  # an outage stops the batch; what was paid for still prints
+            print_report(rows, failures)
+            raise SystemExit(f"error: {claim_id}: {exc} ({exc.kind})") from exc
         rows.append(Row(claim_id, extraction, check_claim(extraction.value, rules)))
     print_report(rows, failures)
 

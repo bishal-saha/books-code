@@ -85,6 +85,13 @@ def test_truncated_response_raises_before_any_dispatch(registry):
     assert len(fake.calls) == 1
 
 
+def test_a_tool_stop_without_calls_raises(registry):
+    fake = FakeModelClient([tool_response()])
+    with pytest.raises(RuntimeError, match="no tool calls"):
+        run_round_trip(fake, registry, SYSTEM, "q", 400, out=lambda s: None)
+    assert len(fake.calls) == 1
+
+
 def test_a_second_tool_request_stops_without_a_third_call(registry):
     get = ToolCall(id="c1", name="get_order", arguments={"order_id": "O-0000141"})
     ship = ToolCall(id="c2", name="get_shipment", arguments={"order_id": "O-0000141"})

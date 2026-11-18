@@ -1,5 +1,6 @@
 """The tool contracts: names, schemas, descriptions and caps, checked before any body exists."""
 
+import json
 import re
 from pathlib import Path
 
@@ -35,6 +36,9 @@ def test_four_verb_first_tools(registry) -> None:
         assert re.fullmatch(r"[a-zA-Z0-9_-]{1,64}", d.name)
         assert d.input_schema["type"] == "object"
         assert re.search(r"\b(Use it|Don't use it|can't)\b", d.description)  # when, and when not
+    # No golden task's expected value appears in a definition the model sees (139 and 93)
+    definitions = json.dumps([d.model_dump() for d in registry.definitions()])
+    assert not re.search(r"\b(139|93)\b", definitions)
 
 
 def test_file_tools_list_the_exports_and_their_columns(registry) -> None:

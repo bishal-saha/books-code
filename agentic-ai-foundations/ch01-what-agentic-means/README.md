@@ -46,7 +46,7 @@ uv run python -m ch01.order_status T-000407 2025-12-16
 
 ## Expected output
 
-`curl` prints `{"status": "ok"}`. `pytest` reports `16 passed`. The workflow prints:
+`curl` prints `{"status": "ok"}`. `pytest` reports `19 passed`. The workflow prints:
 
 ```json
 {

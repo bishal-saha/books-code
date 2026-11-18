@@ -24,7 +24,7 @@
 | `ch05/policy.py` | Reads `GET /policies/expense-policy` from the mock API and flags claims in plain code. |
 | `ch05/run.py` | The batch: extract, check, print Priya's queue. `--demo` uses the scripted replies in `demo_replies.json`. |
 | `ch05/anthropic_adapter.py` | Chapter 3's adapter plus `output_format`: native structured output via `output_config.format` and `anthropic.transform_schema`. |
-| `ch05/model_client.py`, `fake_model.py`, `settings.py` | Chapter 3's model client, fake model and settings (plus `MAX_EXTRACTION_ATTEMPTS`). |
+| `ch05/model_client.py`, `fake_model.py`, `settings.py` | Chapter 3's model client, fake model and settings (plus `MAX_EXTRACTION_ATTEMPTS`; `MODEL_THINKING=off`, the default, sends thinking disabled). |
 | `ch05/sample_replies.py` | Test data: one valid reply and variants that each break it in one way. |
 | `tests/` | Schema and validator tests, validate-and-retry with the fake model, the adapter against a fake HTTP transport, the policy against the seeded API, the demo end to end, two `live` tests. |
 | `conftest.py` | Puts this folder on `sys.path`; the `kestrel_url` fixture uses your running server, or starts the same seeded API in the test process. |
@@ -50,7 +50,7 @@ uv run --env-file .env python -m ch05.run --native  # real model, native structu
 
 ## Expected output
 
-`pytest` reports `26 passed, 2 deselected` (the live tests). `run --demo` prints:
+`pytest` reports `29 passed, 2 deselected` (the live tests). `run --demo` prints:
 
 ```text
 claim     category   amount      receipt  attempts  flags
@@ -61,7 +61,7 @@ claim-05  equipment  64.99 USD   no       1         MISSING_RECEIPT
 claim-06  meals      25.00 ?     yes      1         MISSING_DETAILS
 claim-03  software   240.00 USD  yes      1         -
 claim-07  FAILED: invalid after 3 attempt(s)
-10 model calls, 5649 tokens (failed attempts included)
+10 model calls, 5139 tokens (failed attempts included)
 ```
 
 The fake model counts words as tokens. A real model's replies vary from run to run, so attempts and failures differ; run it more than once before you compare the two paths.

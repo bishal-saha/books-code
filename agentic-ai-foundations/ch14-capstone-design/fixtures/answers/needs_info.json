@@ -4,5 +4,5 @@
   "claims": [],
   "citations": [],
   "confidence": "low",
-  "missing": ["shipment rows with shipped_at in Q2 2026 (2026-04-01 to 2026-06-30)"]
+  "missing": ["shipment rows with shipped_at in Q2 2026 (from 2026-04-01, before 2026-07-01)"]
 }

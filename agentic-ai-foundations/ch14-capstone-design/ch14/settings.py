@@ -10,6 +10,7 @@ import os
 from collections.abc import Mapping
 from decimal import Decimal
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, Field, SecretStr
 
@@ -18,6 +19,7 @@ ENV_VARS = {  # environment variable -> Settings field
     "ANTHROPIC_API_KEY": "api_key",
     "MAX_OUTPUT_TOKENS": "max_output_tokens",
     "MODEL_TIMEOUT_S": "timeout_seconds",
+    "MODEL_THINKING": "model_thinking",
     "MAX_RETRIES": "max_retries",
     "RUN_MAX_STEPS": "run_max_steps",
     "RUN_MAX_TOKENS": "run_max_tokens",
@@ -39,7 +41,10 @@ class Settings(BaseModel):
     max_output_tokens: int = Field(default=1024, gt=0)  # per model call
     timeout_seconds: float = Field(default=30.0, gt=0)  # per model call; the loop shrinks it
     max_retries: int = Field(default=1, ge=0)  # SDK transport retries: 1 inside a loop
-    # The run budget for one question (design values; Chapter 16 tunes them from traces)
+    # "off": Chapter 3's adapter sends thinking={"type": "disabled"}; "adaptive" sends nothing.
+    # No adapter in this folder; Chapter 15 copies it back and reads this field.
+    model_thinking: Literal["off", "adaptive"] = "off"
+    # The run budget for one question (design values; tune them from your own traces)
     run_max_steps: int = Field(default=8, gt=0)
     run_max_tokens: int = Field(default=60_000, gt=0)
     run_max_seconds: float = Field(default=120.0, gt=0)

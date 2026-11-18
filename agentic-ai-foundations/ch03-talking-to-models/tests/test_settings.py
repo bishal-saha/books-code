@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 import pytest
+from ch03.model_client import ConfigError, build_client
 from ch03.settings import Settings
 from pydantic import ValidationError
 
@@ -36,3 +37,8 @@ def test_the_key_never_appears_in_repr():
     assert "sk-secret" not in repr(settings)
     assert settings.api_key is not None
     assert settings.api_key.get_secret_value() == "sk-secret"
+
+
+def test_without_a_key_build_client_raises_config_error():
+    with pytest.raises(ConfigError, match="ANTHROPIC_API_KEY"):
+        build_client(Settings.from_env(ENV))

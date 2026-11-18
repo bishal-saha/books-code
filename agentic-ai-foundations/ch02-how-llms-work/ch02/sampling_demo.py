@@ -10,7 +10,7 @@ from pydantic import BaseModel
 
 from ch02.cost import CostEstimate, estimate_cost
 from ch02.settings import Settings
-from ch02.tokens import LIMIT_STOPS, check_fits, count_text, load_page, make_client
+from ch02.tokens import LIMIT_STOPS, count_text, load_page, make_client, require_fit
 
 MAX_RUNS = 20  # ceiling on N, whatever the caller asks for
 PAGE = "returns-policy.md"
@@ -34,8 +34,7 @@ def run_demo(
 ) -> SamplingReport:
     prompt = prompt_for(page_text)
     counted = count_text(settings, PAGE, prompt, client).counted_tokens
-    if counted is None or not check_fits(counted, max_tokens, settings.context_window_tokens).fits:
-        raise ValueError("prompt plus max_tokens does not fit the configured window")
+    require_fit(counted, max_tokens, settings.context_window_tokens)
     answers: list[str] = []
     truncated = input_tokens = output_tokens = 0
     for _ in range(min(runs, MAX_RUNS)):

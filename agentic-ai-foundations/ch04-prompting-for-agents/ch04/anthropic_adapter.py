@@ -12,15 +12,19 @@ _STOP_REASONS: dict[str, StopReason] = {
     "max_tokens": "truncated",
     "tool_use": "tool_call",
 }
+CONNECT_TIMEOUT_S = 5.0  # fixed connect limit; MODEL_TIMEOUT_S is the read limit (Chapter 3)
 
 
 class AnthropicAdapter:
     def __init__(self, settings: Settings) -> None:
         assert settings.api_key is not None
         self._model = settings.model
+        # Thinking off by default (Chapter 3): thinking tokens count against max_tokens, and
+        # the book's message types carry no thinking blocks. "adaptive" keeps the model default.
+        self._extra = {"thinking": {"type": "disabled"}} if settings.thinking == "off" else {}
         self._client = anthropic.Anthropic(
             api_key=settings.api_key.get_secret_value(),
-            timeout=settings.timeout_seconds,
+            timeout=anthropic.Timeout(settings.timeout_seconds, connect=CONNECT_TIMEOUT_S),
             max_retries=settings.max_retries,
         )
 
@@ -31,6 +35,7 @@ class AnthropicAdapter:
                 max_tokens=max_tokens,
                 system=system,
                 messages=[{"role": m.role, "content": m.content} for m in messages],
+                **self._extra,
             )
         except anthropic.APIError as exc:
             raise _to_model_error(exc) from exc

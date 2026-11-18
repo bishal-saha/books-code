@@ -70,7 +70,7 @@ def render_ticket(ticket: Ticket, data: TicketData) -> str:
     messages = [
         f'<message from="{"customer" if m.author == "customer" else "staff"}" '
         f'sent_at="{m.sent_at.date().isoformat()}">{_esc(m.body)}</message>'
-        for m in ticket.messages
+        for m in sorted(ticket.messages, key=lambda m: m.sent_at)  # oldest first
     ]
     lines = [
         "<ticket>",

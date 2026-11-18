@@ -15,9 +15,9 @@
     "stop_sequence": null,
     "usage": {
       "input_tokens": 230,
-      "output_tokens": 400,
+      "output_tokens": 2000,
       "output_tokens_details": {
-        "thinking_tokens": 400
+        "thinking_tokens": 2000
       }
     }
   }

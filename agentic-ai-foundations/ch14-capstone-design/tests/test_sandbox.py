@@ -49,6 +49,10 @@ def test_sandbox_error_is_a_tool_error(root: Path) -> None:
     """So the registry returns it as a result with is_error=True (Chapter 6), not a crash."""
     with pytest.raises(ToolError, match="Files in the sandbox: latest.csv, shipments.csv"):
         resolve_in_sandbox(root, "returns.csv")
+    os.symlink(root / "loop-b", root / "loop-a")  # a symlink loop: RuntimeError on 3.12
+    os.symlink(root / "loop-a", root / "loop-b")
+    with pytest.raises(ToolError, match="not a valid file name"):
+        resolve_in_sandbox(root, "loop-a")
 
 
 def test_unresolved_root_is_a_programming_error(root: Path) -> None:

@@ -8,7 +8,7 @@
 | | |
 |---|---|
 | Type | Book chapter |
-| Tested with | Python 3.12 · anthropic 2.8 · pydantic 2.14 · httpx 0.28 · kestrel-outfitters 0.3.0 · last verified 2026-11-16 |
+| Tested with | Python 3.12 · anthropic 2.8 · pydantic 2.14 · httpx 0.28 · kestrel-outfitters 0.3.0 · last verified 2026-11-18 |
 | Run | `uv run python -m ch06.round_trip --fake single` (no key) |
 | Tests | `uv run pytest` (fake model, no key) |
 | Keys | `ANTHROPIC_API_KEY`, `MODEL` and prices in `.env` for live runs only; see `.env.example` |
@@ -19,7 +19,7 @@
 |---|---|
 | `ch06/tools.py` | `OrderIdArgs`, the `get_order` and `get_shipment` tools (httpx calls to the Kestrel API), `ToolError`, `Tool`, `ToolRegistry` with `definitions()` and `dispatch()`, `build_registry()`. |
 | `ch06/model_client.py` | Chapter 3's model client plus `ToolDefinition`, `ToolCall`, `ToolResult`, `ToolChoice`, and the `assistant_message()` / `tool_results_message()` helpers. |
-| `ch06/anthropic_adapter.py` | Chapter 3's adapter plus tools: tool definitions, `tool_choice`, `tool_use` blocks in, `tool_result` blocks out. The only file that imports the SDK. |
+| `ch06/anthropic_adapter.py` | Chapter 3's adapter (thinking off unless `MODEL_THINKING=adaptive`, 5 s connect limit) plus tools: tool definitions, `tool_choice`, `tool_use` blocks in, `tool_result` blocks out. The only file that imports the SDK. |
 | `ch06/fake_model.py` | Chapter 3's fake model; scripted responses can carry tool calls, and every request is recorded with its tools and tool choice. |
 | `ch06/prompts/order_lookup_v1.md`, `ch06/prompts.py` | The six-section system prompt and Chapter 4's loader. |
 | `ch06/round_trip.py` | `needs_tools()` and `run_round_trip()`: one model call, dispatch, one follow-up call. |
@@ -52,7 +52,7 @@ uv run --env-file .env pytest -m live
 
 ## Expected output
 
-`pytest` reports `27 passed, 1 deselected` (the deselected one is the live test).
+`pytest` reports `32 passed, 1 deselected` (the deselected one is the live test).
 
 `--fake` runs use scripted model replies (labelled as fake); the tool results are real rows from
 the seeded API, so they match on every machine. `round_trip --fake single`:

@@ -7,6 +7,7 @@ from contextlib import closing
 from pydantic import ValidationError
 
 from ch03.model_client import (
+    ConfigError,
     Message,
     ModelClient,
     ModelError,
@@ -93,8 +94,11 @@ def main() -> None:
     except ValidationError as exc:
         names = ", ".join(FIELD_TO_VAR[str(e["loc"][0])] for e in exc.errors())
         raise SystemExit(f"error: missing or invalid settings: {names}") from None
+    try:
+        client = build_client(settings)  # no network yet: a missing key is reported first
+    except ConfigError as exc:
+        raise SystemExit(f"error: {exc}") from None
     ticket = fetch_ticket(settings.kestrel_url, args.ticket_id)  # before any model call
-    client = build_client(settings)
     try:
         code = run(client, settings, ticket, stream=not args.no_stream)
     except KeyboardInterrupt:

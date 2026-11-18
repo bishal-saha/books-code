@@ -1,7 +1,8 @@
 """Run two versions of a prompt on the same Kestrel tickets and print a Markdown report.
 
-uv run python -m ch04.compare support_reply 1 2
-uv run python -m ch04.compare support_reply 1 2 --extra ch04/fixtures/embedded_instruction.json
+uv run --env-file .env python -m ch04.compare support_reply 1 2
+uv run --env-file .env python -m ch04.compare support_reply 1 2 \
+    --extra ch04/fixtures/embedded_instruction.json
 """
 
 import argparse
@@ -12,6 +13,7 @@ from pathlib import Path
 import httpx
 from pydantic import BaseModel
 
+from ch04.demo_drafts import DemoModelClient
 from ch04.model_client import ModelClient, ModelError, build_client
 from ch04.prompt_builder import Draft, Prompt, Ticket, TicketData, draft_reply, load_prompt
 from ch04.settings import Settings
@@ -53,6 +55,8 @@ def flags(draft: Draft) -> list[str]:
         found.append("COPIED EXAMPLE")  # placeholder IDs from the few-shot examples
     if draft.stop_reason == "truncated":
         found.append("TRUNCATED")
+    elif draft.stop_reason != "finished":
+        found.append(f"STOPPED ({draft.stop_reason})")  # e.g. a refusal: read it
     return found
 
 
@@ -153,6 +157,7 @@ def main(argv: list[str]) -> int:
     parser.add_argument("version_a", type=int)
     parser.add_argument("version_b", type=int)
     parser.add_argument("--extra", action="append", default=[], help="a local fixture ticket")
+    parser.add_argument("--fake", action="store_true", help="scripted demo drafts, no key")
     args = parser.parse_args(argv)
 
     settings = Settings.from_env()
@@ -160,14 +165,15 @@ def main(argv: list[str]) -> int:
     listed = json.loads(TICKETS_FILE.read_text(encoding="utf-8"))
     entries = [(t["ticket"], t["probe"]) for t in listed]
     entries += [(path, "local fixture") for path in args.extra]
-    client = build_client(settings)
+    client = DemoModelClient(prompts) if args.fake else build_client(settings)
+    model = "fake (scripted demo drafts)" if args.fake else settings.model
     try:
         with httpx.Client(base_url=settings.kestrel_url, timeout=5.0) as http:
             rows = compare(client, http, prompts, entries, settings.max_output_tokens)
     except httpx.HTTPError as exc:
         print(f"error: Kestrel API at {settings.kestrel_url}: {exc!r}", file=sys.stderr)
         return 1
-    print(report(rows, prompts, settings.model, settings.max_output_tokens), end="")
+    print(report(rows, prompts, model, settings.max_output_tokens), end="")
     return 0
 
 

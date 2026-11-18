@@ -91,6 +91,14 @@ def check_fits(input_tokens: int, max_tokens: int, context_window: int) -> Windo
     )
 
 
+def require_fit(counted: int | None, max_tokens: int, context_window: int) -> None:
+    """Refuse a request before it is sent: no provider count, or it does not fit."""
+    if counted is None:
+        raise ValueError("no provider count to check the window with; set ANTHROPIC_API_KEY")
+    if not check_fits(counted, max_tokens, context_window).fits:
+        raise ValueError("prompt plus max_tokens does not fit the configured window")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Count and price one Kestrel docs page")
     parser.add_argument("page", help="file name under KESTREL_DOCS_DIR, e.g. returns-policy.md")
@@ -106,11 +114,12 @@ def main() -> None:
     label = "" if counted else "  (ESTIMATE: no API key)"
     check = check_fits(tokens, args.max_tokens, settings.context_window_tokens)
     print(f"page:                {count.page}")
-    print(f"model:               {settings.model}")
+    if counted:  # without a key no model is involved, so none is named
+        print(f"model:               {settings.model}")
     print(f"characters:          {count.characters}")
     print(f"heuristic tokens:    {count.heuristic_tokens}")
     print(f"counted tokens:      {count.counted_tokens if counted else '-'}{label}")
-    print(f"fits the window:     {check.fits} (max_tokens {args.max_tokens})")
+    print(f"fits the window:     {check.fits} (max_tokens {args.max_tokens}){label}")
     print(f"input cost (USD):    {estimate_cost(tokens, 0, settings).total}{label}")
     print(f"worst case (USD):    {estimate_cost(tokens, args.max_tokens, settings).total}{label}")
 

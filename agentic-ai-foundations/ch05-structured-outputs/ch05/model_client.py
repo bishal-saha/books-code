@@ -1,4 +1,5 @@
-"""Chapter 3's provider-neutral model client, trimmed to complete(). Unchanged otherwise.
+"""Chapter 3's provider-neutral model client, trimmed to complete(). build_client() gains
+Chapter 5's output_format argument; the rest is unchanged.
 
 Stop reasons stay Chapter 3's: finished, truncated, tool_call, and other for anything an
 adapter can't map (a provider refusal arrives as "other").
@@ -8,6 +9,8 @@ from collections.abc import Sequence
 from typing import Literal, Protocol
 
 from pydantic import BaseModel
+
+from ch05.settings import Settings
 
 StopReason = Literal["finished", "truncated", "tool_call", "other"]
 ErrorKind = Literal["timeout", "rate_limited", "auth", "bad_request", "provider_error"]
@@ -41,3 +44,12 @@ class ModelClient(Protocol):
     def complete(
         self, system: str, messages: Sequence[Message], max_tokens: int
     ) -> ModelResponse: ...
+
+
+def build_client(settings: Settings, output_format: type[BaseModel] | None = None) -> ModelClient:
+    """The only place that picks an adapter; the SDK is imported only when it is needed."""
+    if settings.api_key is None or not settings.model:
+        raise SystemExit("set ANTHROPIC_API_KEY and MODEL (see .env.example), or run with --demo")
+    from ch05.anthropic_adapter import AnthropicAdapter
+
+    return AnthropicAdapter(settings, output_format=output_format)

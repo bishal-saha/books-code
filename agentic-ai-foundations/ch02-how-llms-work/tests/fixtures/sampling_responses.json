@@ -60,6 +60,11 @@
     "model": "test-model",
     "content": [
       {
+        "type": "thinking",
+        "thinking": "",
+        "signature": "fixture-signature"
+      },
+      {
         "type": "text",
         "text": "Consumers may return unused items within"
       }
@@ -68,7 +73,10 @@
     "stop_sequence": null,
     "usage": {
       "input_tokens": 180,
-      "output_tokens": 8
+      "output_tokens": 256,
+      "output_tokens_details": {
+        "thinking_tokens": 248
+      }
     }
   },
   {

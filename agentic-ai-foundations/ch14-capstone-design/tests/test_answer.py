@@ -61,3 +61,12 @@ def test_partial_answer_keeps_what_is_missing() -> None:
     answer["confidence"] = "high"  # every remaining claim rests on a file
     answer["missing"] = ["public sources about Harbour Express or Swiftway Parcel"]
     assert FinalAnswer.model_validate(answer).missing
+
+
+def test_unknown_fields_are_rejected() -> None:
+    data = load("carriers.json")
+    data["notes"] = "an invented field"
+    data["citations"][0]["page"] = 3
+    with pytest.raises(ValidationError) as exc:
+        FinalAnswer.model_validate(data)
+    assert {e["type"] for e in exc.value.errors()} == {"extra_forbidden"}

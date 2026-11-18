@@ -8,7 +8,7 @@ from typing import Literal
 import httpx
 from pydantic import BaseModel
 
-BASE_URL = "http://127.0.0.1:8700"  # the single Kestrel mock server
+BASE_URL = "http://127.0.0.1:8700"  # the single mock API server
 USAGE = "usage: python -m ch01.order_status TICKET_ID YYYY-MM-DD"
 
 
@@ -104,7 +104,7 @@ def _get(client: httpx.Client, path: str, not_found: type[WorkflowError]) -> dic
     try:
         response = client.get(path)
     except httpx.TransportError as exc:  # timeouts, refused connections, ...
-        raise UpstreamUnavailable(f"Kestrel API unreachable for {path}") from exc
+        raise UpstreamUnavailable(f"mock API unreachable for {path}") from exc
     if response.status_code == 404:
         raise not_found(response.json().get("error", path))
     if response.is_error:

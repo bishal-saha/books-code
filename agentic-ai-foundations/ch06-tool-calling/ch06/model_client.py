@@ -77,7 +77,7 @@ class ModelClient(Protocol):
 
 
 def assistant_message(response: ModelResponse) -> Message:
-    """The model's turn, rebuilt for the history: its text and its tool calls."""
+    """The model's reply, rebuilt for the history: its text and its tool calls."""
     return Message(role="assistant", content=response.text, tool_calls=response.tool_calls)
 
 

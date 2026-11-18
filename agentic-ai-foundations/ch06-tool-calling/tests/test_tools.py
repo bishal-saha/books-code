@@ -80,3 +80,24 @@ def test_against_the_seeded_kestrel_api(kestrel_url):
     assert '"customer_id": "C-001755"' in order.content
     assert '"status": "shipped"' in order.content
     assert missing.is_error and "has not shipped" in missing.content
+
+
+def test_four_bad_calls_against_the_seeded_kestrel_api(kestrel_url):
+    """The four error results printed in the chapter, one per kind of bad call."""
+    bad_calls = [
+        ToolCall(id="call_1", name="get_order", arguments={"order_id": "O-42"}),
+        ToolCall(id="call_2", name="cancel_order", arguments={"order_id": "O-0000141"}),
+        ToolCall(id="call_3", name="get_shipment", arguments={"order_id": "O-0017612"}),
+        ToolCall(id="call_4", name="get_order", arguments={"order_id": "O-9999999"}),
+    ]
+    with httpx.Client(base_url=kestrel_url, timeout=5.0) as http:
+        registry = build_registry(http)
+        lines = [registry.dispatch(c).model_dump_json() for c in bad_calls]
+    for line in lines:
+        print(line)
+    assert lines == [
+        r"""{"tool_call_id":"call_1","content":"Invalid arguments: order_id: String should match pattern '^O-\\d{7}$'","is_error":true}""",  # noqa: E501
+        """{"tool_call_id":"call_2","content":"Unknown tool: cancel_order. Available tools: get_order, get_shipment.","is_error":true}""",  # noqa: E501
+        """{"tool_call_id":"call_3","content":"No shipment for O-0017612: order O-0017612 has not shipped.","is_error":true}""",  # noqa: E501
+        """{"tool_call_id":"call_4","content":"No order O-9999999 exists.","is_error":true}""",
+    ]

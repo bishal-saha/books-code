@@ -1,10 +1,12 @@
 """Chapter 3's Anthropic adapter (complete() only), plus one Chapter 5 option: output_format.
+Thinking is sent disabled unless MODEL_THINKING=adaptive (see Chapter 3).
 
 With output_format set, every request carries the schema as output_config.format, the
 provider's native structured output. Without it, requests are exactly Chapter 3's.
 """
 
 from collections.abc import Sequence
+from typing import Any
 
 import anthropic
 from pydantic import BaseModel
@@ -19,6 +21,7 @@ _STOP_REASONS: dict[str, StopReason] = {
     "model_context_window_exceeded": "truncated",
     "tool_use": "tool_call",
 }  # anything else, "refusal" included, becomes "other"
+CONNECT_TIMEOUT_S = 5.0  # the SDK's own connect default; an unreachable host fails fast
 
 
 def native_format(output_format: type[BaseModel]) -> anthropic.types.JSONOutputFormatParam:
@@ -35,25 +38,26 @@ class AnthropicAdapter:
     ) -> None:
         assert settings.api_key is not None
         self._model = settings.model
-        self._output_config: anthropic.types.OutputConfigParam | None = (
-            {"format": native_format(output_format)} if output_format else None
-        )
+        self._extra: dict[str, Any] = {}  # request options beyond Chapter 3's basics
+        if settings.thinking == "off":  # thinking tokens would count against max_tokens
+            self._extra["thinking"] = {"type": "disabled"}
+        if output_format:
+            self._extra["output_config"] = {"format": native_format(output_format)}
         self._client = anthropic.Anthropic(
             api_key=settings.api_key.get_secret_value(),  # the one place the key is unwrapped
-            timeout=settings.timeout_seconds,
+            timeout=anthropic.Timeout(settings.timeout_seconds, connect=CONNECT_TIMEOUT_S),
             max_retries=settings.max_retries,
             http_client=http_client,  # None in real use; tests pass a fake transport
         )
 
     def complete(self, system: str, messages: Sequence[Message], max_tokens: int) -> ModelResponse:
-        extra = {"output_config": self._output_config} if self._output_config else {}
         try:
             response = self._client.messages.create(
                 model=self._model,
                 max_tokens=max_tokens,
                 system=system,
                 messages=[{"role": m.role, "content": m.content} for m in messages],
-                **extra,
+                **self._extra,
             )
         except anthropic.APIError as exc:
             raise _to_model_error(exc) from exc

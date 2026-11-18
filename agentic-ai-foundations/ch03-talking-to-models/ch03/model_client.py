@@ -55,10 +55,14 @@ def call_cost_usd(usage: Usage, settings: Settings) -> Decimal:
     return input_cost + output_cost
 
 
+class ConfigError(Exception):
+    """The settings can't build a real client; the CLI turns this into one line."""
+
+
 def build_client(settings: Settings) -> ModelClient:
     """The only place that picks an adapter; the SDK is imported only when it is needed."""
     if settings.api_key is None:
-        raise SystemExit("error: set ANTHROPIC_API_KEY in .env (tests use the fake model)")
+        raise ConfigError("no API key: set ANTHROPIC_API_KEY in .env (tests use the fake model)")
     from ch03.anthropic_adapter import AnthropicAdapter
 
     return AnthropicAdapter(settings)
